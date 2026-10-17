@@ -25,3 +25,5 @@ Only the public GoatCounter account subdomain is needed. Never place a password 
 `node --test tests/*.test.mjs` covers round deduplication, rematches, test/local filtering, privacy preferences, blocked loader/network, and safe query handling, alongside the existing authority, firing and connection tests.
 
 The official small counting script is pinned in `docs/runtime/goatcounter.js`; its provenance notice records the original checksum. A one-line privacy patch blanks the library’s separate query-string field in addition to the fixed page path.
+
+Verified live with one actual setup duel: exactly one game-start and one completion event appeared. Initial dashboard counts include verification activity. GoatCounter’s overall dashboard total includes events; use the named page row for visits and the `game_started` event for duel count. Data can take roughly a minute to appear.

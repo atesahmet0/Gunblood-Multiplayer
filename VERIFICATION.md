@@ -76,4 +76,6 @@ Verified native fullscreen entry and exit for both host and guest in the in-app 
 
 ## Hosted analytics (2026-10-18)
 
-Added separate free hosted GoatCounter account and nonblocking page/game event integration. Only the host reports games on first FIRE and completion; rematches are counted separately as a subset. All 22 source tests pass, including repeated snapshots, pause/resume, rematches, privacy controls, safe URLs and blocked analytics. Localhost and production test sessions are excluded. No PostHog organization or billing settings changed.
+Added separate free hosted GoatCounter account and nonblocking page/game event integration. Only the host reports games on first FIRE and completion; rematches are counted separately as a subset. All 23 source tests pass, including repeated snapshots, pause/resume, rematches, privacy controls, safe URLs and blocked analytics. Localhost and production test sessions are excluded. No PostHog organization or billing settings changed.
+
+Live verification: reloaded the deployed root page, paired two normal production clients through six-digit PeerJS joining, readied both chambers, and completed a right-player win using real pointer clicks. GoatCounter showed one `game_started` and one `game_completed`, alongside the visitor row. These initial counts include this setup duel. Dashboard events are included in its overall total; use the named page row for visits and the Games played event row for duel totals. Final source deployment: `623855a`.
