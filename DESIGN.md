@@ -204,3 +204,5 @@ The one authored entrance is the exchange apron's (180ms) clip-path reveal, ease
 - **Don't** replace Western masthead lettering with a generic system display face.
 - **Don't** bake functional copy or fields into a generated image.
 - **Don't** describe the failed automated mockup comparison as passed or this extraction as accessibility certification.
+
+Fullscreen gameplay uses the native Fullscreen API on the duel section. Keep round status, health, ammunition and exit controls visible; fit the arena at 720:425 using the available container dimensions. Decorative bezel and page-level content recede in this mode.

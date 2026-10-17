@@ -10,7 +10,7 @@ function pointer(w,x,y,fire=false){let e=el(w,'#input'),r=e.getBoundingClientRec
 function ready(){pointer(H,350,200);pointer(G,350,200);pointer(H,85,385);pointer(G,635,385);}
 async function sync(){await until(()=>info(H)?.state===info(G)?.state&&info(H)?.left===info(G)?.left&&info(H)?.right===info(G)?.right,'matching state');}
 async function init(impaired){
- document.querySelector('#frames').replaceChildren();for(const role of ['host','guest']){let f=document.createElement('iframe');f.src='./?test='+Date.now()+role;f.title=role;document.querySelector('#frames').append(f);await new Promise(r=>f.onload=r);if(role==='host')H=f.contentWindow;else G=f.contentWindow;}
+ document.querySelector('#frames').replaceChildren();for(const role of ['host','guest']){let f=document.createElement('iframe');f.src='./?test='+Date.now()+role;f.title=role;f.allowFullscreen=true;document.querySelector('#frames').append(f);await new Promise(r=>f.onload=r);if(role==='host')H=f.contentWindow;else G=f.contentWindow;}
  if(impaired)for(const w of [H,G]){let send=w.RTCDataChannel.prototype.send;w.RTCDataChannel.prototype.send=function(data){if(this.label==='state'&&Math.random()<.2)return;setTimeout(()=>{if(this.readyState==='open')send.call(this,data);},100);};}
  el(G,'#join').click();el(G,'#incoming').value='12';el(G,'#apply').click();await until(()=>/six-digit/.test(el(G,'#status').textContent),'invalid short code');assert(!el(G,'#apply').disabled,'invalid code remains editable');
  el(H,'#host').click();let code=await until(()=>el(H,'#outgoing').value,'six-digit room',25000);assert(/^\d{6}$/.test(code),'host reserves six-digit room');el(G,'#incoming').value=code;el(G,'#apply').click();

@@ -69,3 +69,7 @@ Implemented the user-selected centered mockup using an authentic Ruffle arena ca
 All 18 Node source tests passed. The production-client two-document suite passed with public PeerJS six-digit pairing, 100 ms delay each direction and 20% replaceable-state loss; see `evidence/western-integration.txt`. Gameplay SWF unchanged. This remains same-machine/network coverage.
 
 Independent visual review resolved its masthead-font finding. Automated comp fidelity scoring remains failed/open: fixed regions misalign after preserving the original arena aspect ratio, and its text detector incorrectly reads the reference masthead as small dark two-line lettering. The failed scores and review remain local under `.impeccable/`; this is not recorded as an automated visual pass.
+
+## Fullscreen and attribution (2026-10-18)
+
+Verified native fullscreen entry and exit for both host and guest in the in-app Chromium browser with real paired Ruffle players. At 1280×720, the arena retained 720:425 proportions, HUD and exit controls remained visible, and fullscreen content fit without vertical scrolling. All 18 source tests passed. Footer adaptation credit now links the user-requested `atesahmet0` name to their GitHub profile; original creator credit remains. Unsupported fullscreen environments hide the control; rejected requests show a recovery message.

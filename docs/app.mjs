@@ -142,3 +142,21 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('pagehide',()=>peer?.close());
 window.addEventListener('unhandledrejection',e=>error(e.reason?.message||'Unexpected error. Retry to start again.'));
+
+const fullscreenButton=$('#fullscreen');
+const fullscreenGame=$('#game');
+fullscreenButton.hidden=!document.fullscreenEnabled;
+function syncFullscreen(){
+ const active=document.fullscreenElement===fullscreenGame;
+ fullscreenButton.textContent=active?'Exit fullscreen':'Fullscreen';
+ fullscreenButton.setAttribute('aria-pressed',String(active));
+ // A resized arena must be readied again with a fresh pointer position.
+ pointer.ready=false;pointer.fire=false;needLeave=true;
+}
+fullscreenButton.onclick=async()=>{
+ try{
+  if(document.fullscreenElement===fullscreenGame)await document.exitFullscreen();
+  else await fullscreenGame.requestFullscreen();
+ }catch{status('Fullscreen is unavailable. Try the browser’s fullscreen control.',true);}
+};
+document.addEventListener('fullscreenchange',syncFullscreen);

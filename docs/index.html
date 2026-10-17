@@ -55,7 +55,7 @@
    </div>
   </section>
   <section id="game" class="game" hidden aria-label="Multiplayer duel">
-   <div class="matchline"><strong id="side"></strong><button id="leave" class="text-button">Leave duel</button></div>
+   <div class="matchline"><strong id="side"></strong><div class="match-actions"><button id="fullscreen" class="text-button" hidden aria-pressed="false">Fullscreen</button><button id="leave" class="text-button">Leave duel</button></div></div>
    <div class="roundline"><span id="round" role="status" aria-live="polite">Waiting for both players</span><button id="rematch" hidden>Request rematch</button></div>
    <div id="game-feedback"></div>
    <p id="suspend" class="suspend" hidden>Host tab was hidden. Both players must leave their chambers and ready again.</p>
@@ -67,7 +67,7 @@
    <p class="game-instructions">Hold your cursor over your chamber: left for host, right for guest. Both must hold through 3–2–1. Aim and click after FIRE. Six shots each.</p>
   </section>
   <div class="cabinet-foot"><details class="connection-help"><summary>How direct play works</summary><div class="help-copy"><p>The host runs all gameplay and has a latency advantage. The guest sends aim and fire inputs. Public STUN helps discover a direct route; PeerJS’s free public service exchanges connection details so six-digit joining works. Its operators host signaling; neither player maintains a backend. Availability depends on that service.</p><p>Gameplay travels directly between browsers, with no TURN relay. Some networks need a relay and cannot connect here. The duel ends when the host leaves. Rematches require both players.</p><p>Keep the host tab visible. Share codes only with the friend you want to connect to.</p></div></details>
-  <footer><span>Original game by Andrew Wolf / <a href="https://www.wolfgames.com/">Wolf Games</a> · <a href="https://www.gunblood.com/">Gunblood.com</a></span><span>Unofficial multiplayer adaptation · Rendered with <a href="https://ruffle.rs/">Ruffle</a></span></footer></div>
+  <footer><span>Original game by Andrew Wolf / <a href="https://www.wolfgames.com/">Wolf Games</a> · <a href="https://www.gunblood.com/">Gunblood.com</a></span><span>Unofficial multiplayer adaptation by <a href="https://github.com/atesahmet0">atesahmet0</a> · Rendered with <a href="https://ruffle.rs/">Ruffle</a></span></footer></div>
  </main>
  <noscript><p class="noscript">Enable JavaScript to connect and play Gunblood.</p></noscript>
  <script>window.RufflePlayer={config:{autoplay:'on',splashScreen:false,unmuteOverlay:'hidden',allowScriptAccess:false,logLevel:'warn',openUrlMode:'allow'}};</script>
