@@ -61,3 +61,11 @@ An independent-browser duel also passed with **Chrome 155.0.8059.80** as guest a
 Serve `docs/` locally and open `test-runner.html` for the production-client integration suite. `control-test.html` supports manual pairing between independent browsers with pointer-event test controls. `simulation-test.html` isolates the compiled SWF; `bridge-test.html` isolates bridge startup and snapshot transfer. Keep the host document visible while gameplay checks run.
 
 The final compiled SWF checksum is recorded in `docs/build.json`. The deployed checksum matches the tested local SWF. The live Pages pairing/gameplay/rematch/draw/departure suite also passed with 100 ms delay each way and 20% replaceable-state loss. See `evidence/deployment.json` and `evidence/live-integration.txt`.
+
+## Centered Western cabinet redesign (2026-10-18)
+
+Implemented the user-selected centered mockup using an authentic Ruffle arena capture, generated material artwork, semantic controls and self-hosted OFL fonts. Verified desktop captures at 1280, 1440 and 1505 CSS pixels, and a 390-pixel mobile layout. The mobile join form rejects a short code and has no horizontal overflow.
+
+All 18 Node source tests passed. The production-client two-document suite passed with public PeerJS six-digit pairing, 100 ms delay each direction and 20% replaceable-state loss; see `evidence/western-integration.txt`. Gameplay SWF unchanged. This remains same-machine/network coverage.
+
+Independent visual review resolved its masthead-font finding. Automated comp fidelity scoring remains failed/open: fixed regions misalign after preserving the original arena aspect ratio, and its text detector incorrectly reads the reference masthead as small dark two-line lettering. The failed scores and review remain local under `.impeccable/`; this is not recorded as an automated visual pass.

@@ -1,0 +1,24 @@
+{
+  "tool": "native image_gen",
+  "reference": "/Users/ates/Documents/projects/gunblood/multiplayer/.impeccable/mocks/duel-cabinet.png",
+  "source": "/Users/ates/.codex/generated_images/01a14c17-10c3-7552-9ef4-eba2e49ebd17/exec-774adffd-9ef9-4e76-b4e1-2f26dcf6ceb4.png",
+  "requested_dimensions": [
+    2048,
+    1024
+  ],
+  "transparent_background": false,
+  "prompt_file": "cabinet-timber.png.prompt.txt",
+  "prompt": "Use case: stylized-concept. Asset type: production full-bleed raster wood texture for HTML cabinet header and apron. Generate 2048x1024 opaque landscape texture. Attached image is material style reference only: match its dark stained walnut horizontal grain, black-brown aged polished timber, subtle scratches, worn amber striations, authentic frontier saloon cabinet material. Show ONLY one continuous flat straight-on horizontal-grain walnut surface, evenly dark enough for bone-colored text overlaid later in HTML. No lettering, symbols, logos, outlines, game, hardware, objects, border, frame, bevel or panel edges. Full-bleed continuous dark wood material photograph.",
+  "native_dimensions": [
+    1774,
+    887
+  ],
+  "postprocessing": [
+    "Lanczos resample native image to requested dimensions; preserve alpha where present"
+  ],
+  "final_dimensions": [
+    2048,
+    1024
+  ],
+  "mode": "RGB"
+}

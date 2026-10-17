@@ -1,0 +1,1 @@
+Derived by deterministic crop from native generated saloon-backdrop.png; exact original generation prompt and crop history are retained in .impeccable/asset-sources/saloon-backdrop.png.json. No comp pixels were used as shipping artwork.

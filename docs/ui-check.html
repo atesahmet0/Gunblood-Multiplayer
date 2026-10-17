@@ -3,7 +3,7 @@
 <h1>Responsive client checks</h1><p>Production client in a real narrow viewport. Buttons resize the frame; inspect checks visible layout boundaries and field accessibility.</p>
 <button id="small">320 px</button><button id="mobile">390 px</button><button id="tablet">768 px</button><button id="desktop">1120 px</button><button id="zoom">560 px (1120 px at 200%)</button><button id="inspect">Inspect layout</button><pre id="report">Ready</pre><iframe title="Responsive multiplayer client" src="./"></iframe>
 <script>
-const f=document.querySelector('iframe');for(const [id,width] of Object.entries({small:320,mobile:390,tablet:768,desktop:1120,zoom:560}))document.querySelector('#'+id).onclick=()=>f.style.width=width+'px';
+const f=document.querySelector('iframe');const requested=Number(new URLSearchParams(location.search).get('width'));if([320,390,560,768,1120,1280,1440,1505].includes(requested))f.style.width=requested+'px';f.onload=()=>{const d=f.contentDocument;new ResizeObserver(()=>{const h=d.body.scrollHeight;f.style.height=Math.max(850,h)+'px';}).observe(d.body);};for(const [id,width] of Object.entries({small:320,mobile:390,tablet:768,desktop:1120,zoom:560}))document.querySelector('#'+id).onclick=()=>f.style.width=width+'px';
 document.querySelector('#inspect').onclick=()=>{
  const d=f.contentDocument,w=f.contentWindow;const visible=e=>e.getClientRects().length>0;
  const code=d.querySelector('#incoming');const rect=code.getBoundingClientRect();

@@ -1,0 +1,1 @@
+Screenshot of the actual rebuilt Gunblood SWF, rendered locally with bundled Ruffle 0.7.1 at 1600x944, captured through the in-app browser. Original game by Andrew Wolf / Wolf Games. No generated game artwork. The game retains the original archive provenance in archive/provenance.json.

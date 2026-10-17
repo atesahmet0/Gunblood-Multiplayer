@@ -1,3 +1,9 @@
 build/
 __pycache__/
 .DS_Store
+
+# Local mockup tooling and large rendered review evidence
+.impeccable/asset-sources/
+.impeccable/build/
+.impeccable/review/*
+!.impeccable/review/finish-review.md

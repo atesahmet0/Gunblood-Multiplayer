@@ -1,0 +1,37 @@
+{
+  "tool": "native image_gen",
+  "reference": "/Users/ates/Documents/projects/gunblood/multiplayer/.impeccable/mocks/duel-cabinet.png",
+  "source": "/Users/ates/.codex/generated_images/01a14c17-10c3-7552-9ef4-eba2e49ebd17/exec-0209a329-6a8c-4ffc-9cd9-1e90fe4d07b6.png",
+  "requested_dimensions": [
+    1280,
+    320
+  ],
+  "transparent_background": true,
+  "prompt_file": "host-button.png.prompt.txt",
+  "prompt": "Use case: product-mockup. Asset type: standalone native transparent PNG web control plate. Generate exactly 1280x320 image, 4:1 aspect. Attached saloon mockup is material and style reference only for red Host Game button. Show ONE completely EMPTY oxblood RED rectangular button plate, front-on orthographic, nearly edge to edge with only 2 percent transparent safety margin. Thin antique golden brass rim, dark narrow inset lip, small softened corners, FOUR brass flathead screw heads one at each corner, rich deep red weathered leather/lacquer blank central face. Realistic warm subdued material, subtle inset depth. Central red face completely BLANK for text to be overlaid in HTML. NO lettering, words, symbols, icon, star, extra object, cabinet or scene. Genuinely alpha-transparent outside the plate, no background fill and no checkerboard illustration.",
+  "native_dimensions": [
+    1983,
+    793
+  ],
+  "postprocessing": [
+    "Crop native transparent padding to alpha greater than 8 content bounds with 2 native pixels safety",
+    "Resample generated artwork to 1228x306 and place with transparent margins on 1280x320 canvas; no material synthesis",
+    "Final delivery resized with sips to 640x160 for download size"
+  ],
+  "final_dimensions": [
+    640,
+    160
+  ],
+  "mode": "RGBA",
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "center_alpha": 252,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ]
+}

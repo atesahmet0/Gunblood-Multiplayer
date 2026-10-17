@@ -1,0 +1,35 @@
+{
+  "tool": "native image_gen",
+  "reference": "/Users/ates/Documents/projects/gunblood/multiplayer/.impeccable/mocks/duel-cabinet.png",
+  "source": "/Users/ates/.codex/generated_images/01a14c17-10c3-7552-9ef4-eba2e49ebd17/exec-81f879d8-eb59-463f-8deb-446dbc94604a.png",
+  "requested_dimensions": [
+    2048,
+    1104
+  ],
+  "transparent_background": true,
+  "prompt_file": "arena-bezel.png.prompt.txt",
+  "prompt": "Use case: product-mockup. Asset type: standalone transparent PNG web overlay. Generate exactly 2048x1104, front-on. Attached saloon cabinet mockup is style reference only for its antique golden brass screen bezel. Output ONLY ONE thin rectangular antique golden brass frame with small softly rounded corners, four corner flathead screw heads plus one screw at midpoint of each side, dark inset recess lip. Rectangular empty center opening occupies 94 percent of image width and 90 percent of image height. Frame extends nearly edge to edge with tiny transparent safety margin. Realistic aged warm brass, subtly brushed and scuffed with narrow black inner lip, no exaggerated shiny highlights. The entire large inner opening MUST be genuinely alpha-transparent, and area outside frame also genuinely alpha-transparent; alpha cutout suitable for overlay on a live game. NO game, no scene, no wood, no letters, no solid fill, no white or gray rectangle, no checkerboard illustration, no shadow extending into opening.",
+  "native_dimensions": [
+    1708,
+    921
+  ],
+  "postprocessing": [
+    "Lanczos resample native image to requested dimensions; preserve alpha where present"
+  ],
+  "final_dimensions": [
+    2048,
+    1104
+  ],
+  "mode": "RGBA",
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "center_alpha": 0,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ]
+}

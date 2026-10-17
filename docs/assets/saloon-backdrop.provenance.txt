@@ -1,0 +1,30 @@
+Generated with native image_gen. Shipping ground and edge JPEGs are deterministic crops of this generated source.
+
+Exact prompt:
+Use case: stylized-concept. Asset type: production raster website background. Create a 3072x2048 landscape opaque image based on the attached approved saloon mockup as material and mood reference. Output ONLY the room background, fully remove the entire central arcade cabinet and all associated logo, screen, buttons, controls, footer, trim and hardware. Fill center 80 percent with quiet, dark, straight vertical walnut timber wall planks, richly subtle weathered grain. Keep a cow skull only at far upper left, warm lit oil lantern only at far upper right, one small aged wanted-style paper at far right with NO readable letters, and a whiskey bottle on a barrel at far bottom left. Straight-on full-frame wall composition; warm amber light at outer edges, dark atmospheric walnut brown center suitable behind an HTML cabinet. Reference craftsmanship, realism, patina, lighting and subdued contrast. No cabinet, no interface, no game, no typography, no letters, no buttons. Opaque full bleed background.
+
+Source metadata:
+{
+  "tool": "native image_gen",
+  "reference": "/Users/ates/Documents/projects/gunblood/multiplayer/.impeccable/mocks/duel-cabinet.png",
+  "source": "/Users/ates/.codex/generated_images/01a14c17-10c3-7552-9ef4-eba2e49ebd17/exec-3fab5ee8-213b-4c80-9d01-d242134d7c5f.png",
+  "requested_dimensions": [
+    3072,
+    2048
+  ],
+  "transparent_background": false,
+  "prompt_file": "saloon-backdrop.png.prompt.txt",
+  "prompt": "Use case: stylized-concept. Asset type: production raster website background. Create a 3072x2048 landscape opaque image based on the attached approved saloon mockup as material and mood reference. Output ONLY the room background, fully remove the entire central arcade cabinet and all associated logo, screen, buttons, controls, footer, trim and hardware. Fill center 80 percent with quiet, dark, straight vertical walnut timber wall planks, richly subtle weathered grain. Keep a cow skull only at far upper left, warm lit oil lantern only at far upper right, one small aged wanted-style paper at far right with NO readable letters, and a whiskey bottle on a barrel at far bottom left. Straight-on full-frame wall composition; warm amber light at outer edges, dark atmospheric walnut brown center suitable behind an HTML cabinet. Reference craftsmanship, realism, patina, lighting and subdued contrast. No cabinet, no interface, no game, no typography, no letters, no buttons. Opaque full bleed background.",
+  "native_dimensions": [
+    1536,
+    1024
+  ],
+  "postprocessing": [
+    "Lanczos resample native image to requested dimensions; preserve alpha where present"
+  ],
+  "final_dimensions": [
+    3072,
+    2048
+  ],
+  "mode": "RGB"
+}

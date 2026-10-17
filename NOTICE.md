@@ -13,3 +13,7 @@ The official site's [hosting terms](https://www.gunblood.com/terms_and_condition
 The decompilation/validation helper scripts and analyst-assigned names are additions to this recovery. Java/JPEXS tool binaries are not vendored in Git. The GitHub Pages browser runtime is bundled under `docs/runtime/`, with its Apache and MIT license texts. JPEXS, Eclipse Temurin, and Ruffle retain their own licenses; install them from their official distributions.
 
 PeerJS 1.5.5 is bundled from its official npm distribution under the MIT license, retained in `docs/runtime/PEERJS-LICENSE.txt`. Public PeerJS signaling is operated by the PeerJS project, separately from this GitHub Pages site.
+
+The Western site theme uses self-hosted Rye and Barlow Semi Condensed fonts from the Google Fonts repository. Their SIL Open Font Licenses are retained in `docs/fonts/`. Saloon background, timber, bezel and blank control plates are generated website artwork; exact generation prompts and provenance accompany the assets in `docs/assets/`. The arena preview is a fresh screenshot of the rebuilt game, not generated game art.
+
+Sancreek by Vernon Adams is distributed under the SIL Open Font License; see `docs/fonts/Sancreek-OFL.txt`.
