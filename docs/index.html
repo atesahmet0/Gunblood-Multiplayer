@@ -14,13 +14,8 @@
   <a href="https://github.com/atesahmet0/Gunblood-Multiplayer" class="source-link">Source <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8" stroke="currentColor" stroke-width="1.5"/></svg></a>
  </header>
  <main>
-  <section id="pairing" class="lobby" aria-labelledby="title">
-   <div class="lobby-intro">
-    <h1 id="title">One duel.<br>Two browsers.</h1>
-    <p class="intro">Challenge a friend. One browser hosts the original Flash arena; the other connects directly.</p>
-    <p class="play-note">Six shots each. Hold your cursor over your chamber, then aim and click after FIRE.</p>
-    <p class="device-note">Desktop mouse play recommended.</p>
-   </div>
+  <section id="pairing" class="lobby" aria-label="Gunblood multiplayer">
+   <figure class="game-preview"><img src="game-preview.png" width="600" height="354" alt="Gunblood arena with two gunslingers ready for a duel."></figure>
    <div class="pair-panel">
     <div id="choice-screen">
      <h2>Start a duel</h2>
@@ -53,11 +48,10 @@
       <p class="code-note">Share privately with one friend. This room expires after 10 minutes if nobody connects.</p>
      </div>
     </div>
-    <div id="feedback" class="feedback">
-     <p id="status" role="status" aria-live="polite" aria-atomic="true">Choose a side to begin.</p>
+    <div id="feedback" class="feedback" hidden>
+     <p id="status" role="status" aria-live="polite" aria-atomic="true"></p>
      <button id="retry" class="secondary" hidden>Try again</button>
     </div>
-    <p class="service-note">Free public PeerJS connects the browsers. No accounts or game server.</p>
    </div>
   </section>
   <section id="game" class="game" hidden aria-label="Multiplayer duel">

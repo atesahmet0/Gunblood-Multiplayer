@@ -17,11 +17,9 @@ h1,h2,p{margin:0}
 h1{font-size:clamp(42px,4.9vw,60px);line-height:1.06;letter-spacing:-.03em;text-wrap:balance}
 h2{font-size:28px;line-height:1.2;letter-spacing:-.02em;text-wrap:balance}
 p{max-width:70ch}
-.lobby{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--space-8);align-items:start}
-.lobby-intro{padding-block:var(--space-4)}
-.intro{font-size:20px;line-height:1.5;margin-block-start:var(--space-5);max-width:34ch}
-.play-note{margin-block-start:var(--space-6);max-width:35ch;font-size:16px}
-.device-note{color:var(--muted);font-size:14px;margin-block-start:var(--space-3)}
+.lobby{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--space-8);align-items:center}
+.game-preview{margin:0;min-width:0}
+.game-preview img{display:block;width:100%;height:auto}
 .pair-panel{background:var(--panel);border:1px solid var(--line);padding:var(--space-6);min-width:0}
 .panel-description{margin-block:var(--space-3) var(--space-5);color:var(--muted);font-size:16px}
 .choices{display:grid;gap:var(--space-2)}
@@ -54,7 +52,6 @@ label{display:block;font:600 14px/1.5 system-ui,sans-serif;margin-block-end:var(
 #status{font-size:15px;line-height:1.5;overflow-wrap:anywhere}
 #status.error{color:var(--red);font-weight:600}
 #retry{margin-block-start:var(--space-3)}
-.service-note{font-size:14px;line-height:1.5;color:var(--muted);margin-block-start:var(--space-4)}
 .game{max-width:720px;margin-inline:auto}
 body[data-screen=game] main{padding-block-start:var(--space-6)}
 .matchline{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);font:600 14px/1.5 system-ui,sans-serif}
@@ -90,7 +87,6 @@ footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--space
  .lobby{gap:var(--space-6);grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
  .pair-panel{padding:var(--space-5)}
  h1{font-size:44px}
- .intro{font-size:18px}
  .code-row{flex-wrap:wrap}
  .code-row input{flex-basis:100%;width:100%}
  .code-row button{width:100%}
@@ -100,11 +96,8 @@ footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--space
  .brand{font-size:23px}.site-title{font-size:14px}.source-link{font-size:14px}
  main{padding:var(--space-5) var(--space-5) var(--space-6)}
  .lobby{grid-template-columns:1fr;gap:var(--space-5)}
- body:is([data-screen=host],[data-screen=join]) .lobby-intro{display:none}
- .lobby-intro{padding:0}
+ body:is([data-screen=host],[data-screen=join]) .game-preview{display:none}
  h1{font-size:40px;line-height:1.08}
- .intro{margin-block-start:var(--space-3);max-width:40ch;font-size:17px}
- .play-note{display:none}.device-note{margin-block-start:var(--space-2)}
  .pair-panel{padding:var(--space-5)}
  h2{font-size:26px}
  .code-row{flex-wrap:nowrap;gap:var(--space-3)}

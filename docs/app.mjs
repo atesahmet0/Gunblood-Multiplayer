@@ -5,7 +5,7 @@ const $=s=>document.querySelector(s);
 let remoteSceneReady=false;
 let peer,role,player,poll,seq=0,lastAim=-1,lastFire=-1,round=1,lastSnapshot=-1,lastState='',myRematch=false,theirRematch=false,ended=false,busy=false,starting=false,lastRemote=0,hostPaused=false,needLeave=false;
 let pointer={x:0,y:0,ready:false,fire:false};
-function status(text,error=false){$('#status').textContent=text;$('#status').classList.toggle('error',error);}
+function status(text,error=false){$('#feedback').hidden=!text;$('#status').textContent=text;$('#status').classList.toggle('error',error);}
 function call(name,...args){return player?.ruffle().callExternalInterface(name,...args);}
 function error(message){status(message,true);$('#retry').hidden=false;ended=true;$('#rematch').hidden=true;$('#leave').hidden=true;clearInterval(poll);call('mpSetPaused',true);player?.pause();}
 async function action(fn){try{await fn();}catch(e){status(e.message,true);$('#retry').hidden=false;}}
