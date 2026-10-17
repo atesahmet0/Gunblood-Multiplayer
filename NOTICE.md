@@ -17,3 +17,5 @@ PeerJS 1.5.5 is bundled from its official npm distribution under the MIT license
 The Western site theme uses self-hosted Rye and Barlow Semi Condensed fonts from the Google Fonts repository. Their SIL Open Font Licenses are retained in `docs/fonts/`. Saloon background, timber, bezel and blank control plates are generated website artwork; exact generation prompts and provenance accompany the assets in `docs/assets/`. The arena preview is a fresh screenshot of the rebuilt game, not generated game art.
 
 Sancreek by Vernon Adams is distributed under the SIL Open Font License; see `docs/fonts/Sancreek-OFL.txt`.
+
+GoatCounter counting script is bundled under its declared ISC license; source checksum and the query-redaction patch are recorded in `docs/runtime/GOATCOUNTER-NOTICE.txt`.

@@ -14,7 +14,7 @@ Open the dashboard to see visitor/session counts and the Games played, Games com
 
 ## Data and reliability
 
-The integration sends a fixed page path/title or an allowlisted event name. It sends no room codes, peer IDs, form contents, aim/fire input, health, snapshots, player names, full referrer, query strings or fragments. No replay, autocapture, persistent browser ID, cookie or local storage is used. It honors Do Not Track and Global Privacy Control. GoatCounter processes network/browser information to estimate visitors; see its [privacy policy](https://www.goatcounter.com/privacy).
+The integration sends a fixed page path/title or an allowlisted event name. It sends no room codes, peer IDs, form contents, aim/fire input, health, snapshots, player names, full referrer, query strings or fragments. No replay, autocapture, persistent browser ID, cookie or persistent analytics identifier is used. The bundled library reads its optional local opt-out flag. It honors Do Not Track and Global Privacy Control. GoatCounter processes network/browser information to estimate visitors; see its [privacy policy](https://www.goatcounter.com/privacy).
 
 Localhost, test documents and production `?test=` sessions are excluded. Analytics failures never block gameplay. Blockers, privacy preferences, host disconnects can cause undercounting or inflate unique-browser estimates. Browser-side reporting is suitable for casual usage statistics, not billing or tamper-proof competitive records.
 
@@ -23,3 +23,5 @@ Only the public GoatCounter account subdomain is needed. Never place a password 
 ## Tests
 
 `node --test tests/*.test.mjs` covers round deduplication, rematches, test/local filtering, privacy preferences, blocked loader/network, and safe query handling, alongside the existing authority, firing and connection tests.
+
+The official small counting script is pinned in `docs/runtime/goatcounter.js`; its provenance notice records the original checksum. A one-line privacy patch blanks the library’s separate query-string field in addition to the fixed page path.

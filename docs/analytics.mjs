@@ -15,7 +15,7 @@ export function loadGoatCounter(account){
  return new Promise((resolve,reject)=>{
   const endpoint=`https://${account}.goatcounter.com/count`;
   window.goatcounter={no_onload:true,no_events:true,endpoint,path:'/Gunblood-Multiplayer/',referrer:''};
-  const script=document.createElement('script');script.async=true;script.src='https://gc.zgo.at/count.js';
+  const script=document.createElement('script');script.async=true;script.src='runtime/goatcounter.js';
   script.dataset.goatcounter=endpoint;
   script.onload=()=>typeof window.goatcounter?.count==='function'?resolve(vars=>window.goatcounter.count(vars)):reject(Error('Analytics unavailable'));
   script.onerror=()=>reject(Error('Analytics blocked'));

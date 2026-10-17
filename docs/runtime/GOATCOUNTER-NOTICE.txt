@@ -1,0 +1,5 @@
+Source: https://gc.zgo.at/count.js
+Retrieved 2026-10-18
+Original SHA-256: 792b7abd26c1fb6ae62906833e09a301251e2641816e69e4f95aba518f3fe3f0
+License: ISC, https://opensource.org/licenses/ISC (as declared in source header).
+Local modification: blank the q query parameter before transmission. No room codes or query strings are sent.

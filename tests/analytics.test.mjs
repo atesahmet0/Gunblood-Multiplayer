@@ -28,3 +28,5 @@ test('queued events preserve exact game totals, rematches and safe page URL',asy
  assert.ok(sent.every(v=>v.referrer===''));
  assert.equal(JSON.stringify(sent).includes('utm_source'),false);assert.equal(JSON.stringify(sent).includes('private'),false);
 });
+
+test('bundled counter never sends raw query parameters',async()=>{const {readFile}=await import('node:fs/promises');const source=await readFile(new URL('../docs/runtime/goatcounter.js',import.meta.url),'utf8');assert.ok(source.includes("q: '', // Gunblood"));assert.ok(!source.includes('q: location.search'));});
