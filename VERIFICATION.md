@@ -2,9 +2,19 @@
 
 Verified locally on macOS / Apple Silicon, 2026-10-18. This is casual peer-hosted play; these checks are not an anti-cheat certification or proof of connectivity on arbitrary networks.
 
+## Six-digit joining update
+
+2026-10-18: six-digit rooms use the real public PeerJS service (`0.peerjs.com`) with bundled PeerJS 1.5.5. The original native gameplay channels and SWF are unchanged. Both normal and impaired production-client suites passed automatic joining and the full gameplay/rematch/draw/departure sequence. The impaired run is recorded in `evidence/six-digit-local-impaired.txt`.
+
+Independent **in-app Chromium host ↔ Firefox 158.0 guest** passed automatic six-digit joining and a rendered duel. Both showed Left wins, left health 78, right health -4 (displayed as 0), ammunition [3,3], and identical settled head transforms (61.9,180.25) and (661.9,267.05). Screenshots: `evidence/six-digit-firefox-duel.jpg` and `evidence/six-digit-chromium-host.jpg`. Joining that closed invitation showed “No host has that code” without affecting the existing game. Invalid short codes remained editable in the production UI.
+
+Six added source tests cover exact six-digit format and leading zeros, random code format, reservation collisions, STUN-only bootstrap configuration, incompatible/extra guests, attempt-bound handshake responses, missing rooms, expiry, signaling unavailability and cleanup after a game connects. Collision, expiry and outage tests use a fake broker and clock; they do not deliberately disrupt the public service. No new separate-network coverage was available.
+
+The browser checks below document the original manual-pairing release; its Chrome/Firefox pairing coverage predates the six-digit update.
+
 ## Automated source checks
 
-`node --test tests/*.test.mjs`: **12 tests pass**. They cover version/type/session/expiry validation, malformed codes, incompatible builds, finite constrained inputs, guest authority rejection, countdown resets, premature fire, latched fire, both inputs before post-tick results, simultaneous-death draw, wins, empty-ammunition draw, pause readiness reset, equal eight-tick cooldowns, and the six-shot cap. ActionScript bridge functions are also exercised in a JavaScript VM with mocked Flash rendering/physics. Those source tests do not establish rendered-game compatibility by themselves.
+`node --test tests/*.test.mjs`: **18 tests pass**. They cover version/type/session/expiry validation, malformed codes, incompatible builds, finite constrained inputs, guest authority rejection, countdown resets, premature fire, latched fire, both inputs before post-tick results, simultaneous-death draw, wins, empty-ammunition draw, pause readiness reset, equal eight-tick cooldowns, and the six-shot cap. ActionScript bridge functions are also exercised in a JavaScript VM with mocked Flash rendering/physics. Those source tests do not establish rendered-game compatibility by themselves.
 
 ## Compiled SWF and browser checks
 

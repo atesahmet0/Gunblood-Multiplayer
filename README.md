@@ -6,7 +6,7 @@ Unofficial browser-hosted duels using the recovered Gunblood Flash game and Ruff
 
 [Open the multiplayer site](https://atesahmet0.github.io/Gunblood-Multiplayer/).
 
-Open the same site on two desktop browsers. The host chooses **Host Game** and privately sends the offer code. The guest chooses **Join Game**, pastes the offer, and returns the answer code. The host pastes the answer to connect. Codes expire after ten minutes.
+Open the same site on two desktop browsers. The host chooses **Host Game** and shares the six-digit room code. The guest chooses **Join Game**, enters those six digits (including leading zeros), and clicks **Connect**. Both browsers connect automatically. Unused rooms expire after ten minutes; invitations close once two players connect. Retry creates a fresh room.
 
 Host controls the left character; guest controls the right. Both see the same orientation. Move onto your chamber and hold through the countdown. Leaving the chamber resets the countdown. Aim and click after FIRE. Each player has six shots and the same eight-tick firing cooldown. Both must request a rematch to play another duel.
 
@@ -14,9 +14,9 @@ Keep the host tab visible. Hiding it pauses the duel; both players must leave th
 
 ## Connection limits
 
-There is no game server, signaling service, TURN relay, login or local installation. GitHub Pages serves static files. Google public STUN discovers connection routes. Some NAT/firewall combinations need a relay and cannot connect here. Try another network when direct connectivity fails. Neither player needs to configure a router, but universal connectivity is impossible without a relay.
+There is no game server, TURN relay, login or local installation. GitHub Pages serves static files. **PeerJS operators host the free public signaling service** at `0.peerjs.com`; neither player maintains a backend. Joining depends on its availability and public-service limits. Google public STUN discovers connection routes. Some NAT/firewall combinations need a relay and cannot connect here. Try another network when direct connectivity fails. Neither player needs to configure a router, but universal connectivity is impossible without a relay.
 
-Share connection codes only with your intended opponent: SDP contains connection addresses and credentials for this temporary peer session. No connection codes or match history are uploaded to an application backend.
+Share the room code privately: it is a short, guessable invitation, not authentication. The first compatible guest occupies the room. PeerJS exchanges temporary connection metadata; browsers then exchange validated session/SDP descriptions over a temporary direct PeerJS data connection. Once the native gameplay channels open, that bootstrap connection and public signaling registration close. No game state or match history is sent to PeerJS. No TURN fallback is configured, including for the bootstrap connection.
 
 The host browser is authoritative and can cheat. It also has a latency advantage. This is casual play between trusted friends, not competitive matchmaking.
 
@@ -28,7 +28,7 @@ Serve `docs/` over localhost (Python is only a developer convenience, not requir
 python3 -m http.server 8780 --bind 127.0.0.1 --directory docs
 ```
 
-Open `http://127.0.0.1:8780/`. HTTPS is required for public hosting. Ruffle 0.7.1 and its license texts are bundled in `docs/runtime/`.
+Open `http://127.0.0.1:8780/`. HTTPS is required for public hosting. Ruffle 0.7.1 and PeerJS 1.5.5 are bundled in `docs/runtime/` with license texts. PeerJS comes from its official npm package; its archive integrity and client SHA-256 are recorded in `evidence/peerjs-package.json`. Even local six-digit pairing uses the public signaling service and needs Internet access.
 
 ## Rebuild the multiplayer SWF
 

@@ -1,3 +1,4 @@
+import {roomCode} from './lobby.mjs';
 import {Peer} from './peer.mjs';
 import {BUILD,input} from './protocol.mjs';
 const $=s=>document.querySelector(s);
@@ -29,7 +30,7 @@ async function connected(){
 }
 function setPeer(r){
  role=r;ended=false;
- peer=new Peer(role,{open:connected,error,message:onMessage,snapshot:onSnapshot});
+ peer=new Peer(role,{open:connected,error,message:onMessage,snapshot:onSnapshot,progress:status,code:code=>{ $('#outgoing').value=code;$('#outgoing-wrap').hidden=false;status('Room ready. Share this six-digit code and keep this tab open.'); }});
 }
 function onMessage(type,data,channel){
  if(ended||!data)return;
@@ -83,19 +84,18 @@ function maybeRematch(){
 }
 $('#host').onclick=()=>action(async()=>{
  $('#host').disabled=true;$('#join').disabled=true;setPeer('host');$('#exchange').hidden=false;$('#incoming').hidden=true;$('#incoming-label').hidden=true;$('#apply').hidden=true;
- $('#step').textContent='Send your offer';$('#instruction').textContent='Gathering connection routes. Your code will appear when this finishes.';status('Gathering ICE candidates…');
- const code=await peer.offer();$('#outgoing').value=code;$('#outgoing-wrap').hidden=false;$('#incoming').hidden=false;$('#incoming-label').hidden=false;$('#apply').hidden=false;
- $('#step').textContent='Send your offer, then paste the answer';$('#instruction').textContent='Your friend chooses Join Game and pastes your offer. Paste their answer below to connect.';$('#apply').textContent='Connect with answer';status('Offer ready. Waiting for your friend’s answer.');
+ $('#step').textContent='Invite your friend';$('#instruction').textContent='Share your six-digit code. Your friend enters it under Join Game; you connect automatically.';status('Reserving your room through PeerJS public signaling…');
+ try{await peer.host();}catch(e){peer.close();throw e;}
 });
 $('#join').onclick=()=>{
- $('#host').disabled=true;$('#join').disabled=true;setPeer('guest');$('#exchange').hidden=false;$('#step').textContent='Paste the host’s offer';$('#instruction').textContent='Generate an answer and send it back to the host.';status('Waiting for an offer code.');
+ $('#host').disabled=true;$('#join').disabled=true;$('#exchange').hidden=false;$('#step').textContent='Enter your friend’s code';$('#instruction').textContent='Ask the host for their six-digit code, then connect.';status('Waiting for the host’s six-digit code.');$('#incoming').focus();
 };
 $('#apply').onclick=()=>action(async()=>{
- $('#apply').disabled=true;
- try{if(role==='guest'){status('Gathering ICE candidates…');const code=await peer.answer($('#incoming').value);$('#outgoing').value=code;$('#outgoing-wrap').hidden=false;$('#apply').hidden=true;status('Send your answer to the host. Keep this tab open.');}
- else{await peer.accept($('#incoming').value);status('Connecting directly…');$('#apply').hidden=true;}}
- finally{$('#apply').disabled=false;}
+ const code=roomCode($('#incoming').value);$('#apply').disabled=true;setPeer('guest');
+ status('Finding the host through PeerJS public signaling…');
+ try{await peer.join(code);}catch(e){peer.close();throw e;}
 });
+$('#incoming').onkeydown=e=>{if(e.key==='Enter')$('#apply').click();};
 $('#copy').onclick=()=>action(async()=>{await navigator.clipboard.writeText($('#outgoing').value);status('Code copied. Send it privately to your friend.');});
 $('#retry').onclick=()=>{peer?.close();location.reload();};
 $('#leave').onclick=()=>{peer?.close();error('You left the duel. Retry to start a fresh session.');};

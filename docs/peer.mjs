@@ -1,3 +1,4 @@
+import {Lobby} from './lobby.mjs';
 import {BUILD,VERSION,sessionId,encodeCode,decodeCode,RELAY_ERROR} from './protocol.mjs';
 export class Peer {
  constructor(role,events={}){
@@ -17,7 +18,7 @@ export class Peer {
  bind(ch){
   if(!['control','state'].includes(ch.label)||this[ch.label]){ch.close();return;}
   this[ch.label]=ch;ch.binaryType='arraybuffer';
-  ch.onopen=()=>{if(this.control?.readyState==='open'&&this.state?.readyState==='open'&&!this.opened){this.opened=true;clearTimeout(this.connectTimer);this.send('hello',{build:BUILD,v:VERSION});this.events.open?.();}};
+  ch.onopen=()=>{if(this.control?.readyState==='open'&&this.state?.readyState==='open'&&!this.opened){this.opened=true;this.lobby?.close();clearTimeout(this.connectTimer);this.send('hello',{build:BUILD,v:VERSION});this.events.open?.();}};
   ch.onmessage=e=>{if(this.closed)return;this.receive(ch.label,e.data).catch(()=>this.fail('Invalid peer data. The session has ended.'));};
   ch.onclose=()=>{if(!this.closed)this.fail('Peer left. The session has ended. Retry to start a new session.');};
   ch.onerror=()=>this.fail(this.opened?'Peer disconnected. The session has ended. Retry with fresh codes.':RELAY_ERROR);
@@ -60,9 +61,11 @@ export class Peer {
   });
  }
  waitConnect(){clearTimeout(this.connectTimer);this.connectTimer=setTimeout(()=>this.fail(RELAY_ERROR),45000);}
+ async host(){this.lobby=new Lobby(this,this.events);await this.lobby.start();}
+ async join(code){this.lobby=new Lobby(this,this.events);await this.lobby.start(code);}
  async offer(){await this.pc.setLocalDescription(await this.pc.createOffer());await this.gather();return encodeCode('offer',this.session,this.pc.localDescription.sdp);}
  async answer(text){const c=decodeCode(text,'offer');this.session=c.session;await this.pc.setRemoteDescription({type:'offer',sdp:c.sdp});await this.pc.setLocalDescription(await this.pc.createAnswer());await this.gather();this.waitConnect();return encodeCode('answer',this.session,this.pc.localDescription.sdp);}
  async accept(text){if(this.pc.signalingState!=='have-local-offer')throw Error('This offer is no longer active. Retry with fresh codes.');const c=decodeCode(text,'answer',this.session);await this.pc.setRemoteDescription({type:'answer',sdp:c.sdp});this.waitConnect();}
  fail(message){if(this.closed)return;this.close();this.events.error?.(message);}
- close(){if(this.closed)return;this.send('bye');this.closed=true;clearTimeout(this.connectTimer);clearTimeout(this.disconnectTimer);this.control?.close();this.state?.close();this.pc.close();}
+ close(){if(this.closed)return;this.send('bye');this.closed=true;this.lobby?.close();clearTimeout(this.connectTimer);clearTimeout(this.disconnectTimer);this.control?.close();this.state?.close();this.pc.close();}
 }

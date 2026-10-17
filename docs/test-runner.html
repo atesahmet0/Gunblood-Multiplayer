@@ -12,9 +12,10 @@ async function sync(){await until(()=>info(H)?.state===info(G)?.state&&info(H)?.
 async function init(impaired){
  document.querySelector('#frames').replaceChildren();for(const role of ['host','guest']){let f=document.createElement('iframe');f.src='./?test='+Date.now()+role;f.title=role;document.querySelector('#frames').append(f);await new Promise(r=>f.onload=r);if(role==='host')H=f.contentWindow;else G=f.contentWindow;}
  if(impaired)for(const w of [H,G]){let send=w.RTCDataChannel.prototype.send;w.RTCDataChannel.prototype.send=function(data){if(this.label==='state'&&Math.random()<.2)return;setTimeout(()=>{if(this.readyState==='open')send.call(this,data);},100);};}
- el(H,'#host').click();let offer=await until(()=>el(H,'#outgoing').value,'offer',60000);el(G,'#join').click();el(G,'#incoming').value=offer;el(G,'#apply').click();let answer=await until(()=>el(G,'#outgoing').value,'answer',60000);el(H,'#incoming').value=answer;el(H,'#apply').click();
+ el(G,'#join').click();el(G,'#incoming').value='12';el(G,'#apply').click();await until(()=>/six-digit/.test(el(G,'#status').textContent),'invalid short code');assert(!el(G,'#apply').disabled,'invalid code remains editable');
+ el(H,'#host').click();let code=await until(()=>el(H,'#outgoing').value,'six-digit room',25000);assert(/^\d{6}$/.test(code),'host reserves six-digit room');el(G,'#incoming').value=code;el(G,'#apply').click();
  await until(()=>info(H)?.role==='host'&&info(G)?.role==='guest'&&el(H,'#score').textContent,'both initialized',30000);
- note('PASS manual offer/answer and both scenes initialized');
+ note('PASS automatic six-digit pairing through public PeerJS and both scenes initialized');
 }
 async function run(impaired){
  log=[];report.textContent='Running…';document.querySelectorAll('button').forEach(b=>b.disabled=true);
