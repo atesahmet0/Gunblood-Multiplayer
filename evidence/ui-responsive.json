@@ -1,0 +1,114 @@
+[
+  {
+    "viewport": 320,
+    "scrollWidth": 320,
+    "noHorizontalOverflow": true,
+    "choiceVisible": false,
+    "exchangeVisible": true,
+    "backVisible": true,
+    "codeField": {
+      "visible": true,
+      "width": 254,
+      "invalid": "true",
+      "value": "12"
+    },
+    "errorVisible": true,
+    "buttons": [
+      {
+        "text": "Back",
+        "width": 76.546875,
+        "height": 48
+      },
+      {
+        "text": "Connect",
+        "width": 254,
+        "height": 48
+      }
+    ],
+    "status": "Check the six-digit code above."
+  },
+  {
+    "viewport": 390,
+    "scrollWidth": 390,
+    "noHorizontalOverflow": true,
+    "choiceVisible": false,
+    "exchangeVisible": true,
+    "backVisible": true,
+    "codeField": {
+      "visible": true,
+      "width": 193.5390625,
+      "invalid": "true",
+      "value": "12"
+    },
+    "errorVisible": true,
+    "buttons": [
+      {
+        "text": "Back",
+        "width": 76.546875,
+        "height": 48
+      },
+      {
+        "text": "Connect",
+        "width": 86.4609375,
+        "height": 62.3984375
+      }
+    ],
+    "status": "Check the six-digit code above."
+  },
+  {
+    "viewport": 768,
+    "scrollWidth": 768,
+    "noHorizontalOverflow": true,
+    "choiceVisible": false,
+    "exchangeVisible": true,
+    "backVisible": true,
+    "codeField": {
+      "visible": true,
+      "width": 319.6015625,
+      "invalid": "true",
+      "value": "12"
+    },
+    "errorVisible": true,
+    "buttons": [
+      {
+        "text": "Back",
+        "width": 76.546875,
+        "height": 48
+      },
+      {
+        "text": "Connect",
+        "width": 319.6015625,
+        "height": 48
+      }
+    ],
+    "status": "Check the six-digit code above."
+  },
+  {
+    "viewport": 560,
+    "scrollWidth": 560,
+    "noHorizontalOverflow": true,
+    "choiceVisible": false,
+    "exchangeVisible": true,
+    "backVisible": true,
+    "codeField": {
+      "visible": true,
+      "width": 363.5390625,
+      "invalid": "true",
+      "value": "12"
+    },
+    "errorVisible": true,
+    "buttons": [
+      {
+        "text": "Back",
+        "width": 76.546875,
+        "height": 48
+      },
+      {
+        "text": "Connect",
+        "width": 86.4609375,
+        "height": 62.3984375
+      }
+    ],
+    "status": "Check the six-digit code above."
+  }
+]

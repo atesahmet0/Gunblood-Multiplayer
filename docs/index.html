@@ -1,10 +1,84 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gunblood — Browser duels</title><link rel="stylesheet" href="style.css"></head><body>
-<header><a href="https://www.gunblood.com/" class="brand">GUNBLOOD</a><span>Browser duels</span><a href="https://github.com/atesahmet0/Gunblood-Multiplayer">Source</a></header>
-<main><section id="pairing"><h1>One duel.<br>Two browsers.</h1><p class="intro">Challenge a friend. One browser hosts the original Flash arena; the other connects directly.</p><div class="choices"><button id="host">Host Game</button><button id="join" class="secondary">Join Game</button></div>
-<div id="exchange" hidden><h2 id="step"></h2><p id="instruction"></p><label for="incoming" id="incoming-label">Host’s six-digit code</label><input id="incoming" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" placeholder="000000"><button id="apply">Connect</button><div id="outgoing-wrap" hidden><label for="outgoing">Your room code</label><input id="outgoing" type="text" readonly aria-label="Your room code"><button id="copy" class="secondary">Copy code</button><p>Share privately with one friend. This room expires after 10 minutes if nobody connects.</p></div></div>
-<p class="limit">Free public PeerJS connects the browsers. No accounts or game server. Some networks need a relay and cannot connect here. Keep the host tab visible.</p></section>
-<p id="status" role="status" aria-live="polite">Choose a side to begin.</p><button id="retry" class="secondary" hidden>Retry with fresh codes</button>
-<section id="game" hidden><div class="matchline"><strong id="side"></strong><span id="round">Waiting for both players</span><button id="leave" class="secondary">Leave</button></div><div id="arena"><div id="player"></div><div id="input" tabindex="0" role="application" aria-label="Duel arena. Move over your chamber to ready, then aim and click to fire."></div></div><div id="score"></div><button id="rematch" hidden>Request rematch</button><p>Hold your cursor over your chamber: left for host, right for guest. Both must hold through 3–2–1. Aim and click after FIRE. Six shots each.</p><p id="suspend" hidden>Host tab was hidden. Both players must leave their chambers and ready again.</p></section>
-<details><summary>How direct play works</summary><p>The host runs all gameplay and has a latency advantage. The guest sends aim and fire inputs. Public STUN helps discover a direct route; PeerJS’s free public service exchanges connection details so six-digit joining works. Its operators host signaling; neither player maintains a backend. Availability depends on that service. Gameplay travels directly between browsers, with no TURN relay. The duel ends when the host leaves. Rematches require both players.</p><p>Desktop mouse play recommended. Share codes only with the friend you want to connect to.</p></details>
-<footer>Original game by Andrew Wolf / <a href="https://www.wolfgames.com/">Wolf Games</a> · <a href="https://www.gunblood.com/">Gunblood.com</a>. Unofficial multiplayer adaptation. Rendered with <a href="https://ruffle.rs/">Ruffle</a>.</footer></main>
-<script>window.RufflePlayer={config:{autoplay:'on',splashScreen:false,unmuteOverlay:'hidden',allowScriptAccess:false,logLevel:'warn',openUrlMode:'allow'}};</script><script src="runtime/ruffle.js"></script><script src="runtime/peerjs-1.5.5.min.js"></script><script type="module" src="app.mjs"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="theme-color" content="#f1e7d6">
+ <title>Gunblood — Browser duels</title>
+ <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ <header class="site-header">
+  <a href="https://www.gunblood.com/" class="brand">GUNBLOOD</a>
+  <span class="site-title">Browser duels</span>
+  <a href="https://github.com/atesahmet0/Gunblood-Multiplayer" class="source-link">Source <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8" stroke="currentColor" stroke-width="1.5"/></svg></a>
+ </header>
+ <main>
+  <section id="pairing" class="lobby" aria-labelledby="title">
+   <div class="lobby-intro">
+    <h1 id="title">One duel.<br>Two browsers.</h1>
+    <p class="intro">Challenge a friend. One browser hosts the original Flash arena; the other connects directly.</p>
+    <p class="play-note">Six shots each. Hold your cursor over your chamber, then aim and click after FIRE.</p>
+    <p class="device-note">Desktop mouse play recommended.</p>
+   </div>
+   <div class="pair-panel">
+    <div id="choice-screen">
+     <h2>Start a duel</h2>
+     <p class="panel-description">Host plays left. Guest plays right.</p>
+     <div class="choices">
+      <button id="host">Host Game <svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.5"/></svg></button>
+      <span class="action-hint">Create a six-digit code for your friend.</span>
+      <button id="join" class="secondary">Join Game</button>
+      <span class="action-hint">Already have a code? Enter it here.</span>
+     </div>
+    </div>
+    <div id="exchange" hidden>
+     <button id="back" class="text-button" type="button"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true"><path d="M13 8H3m5-5L3 8l5 5" stroke="currentColor" stroke-width="1.5"/></svg> Back</button>
+     <h2 id="step" tabindex="-1"></h2>
+     <p id="instruction" class="panel-description"></p>
+     <div id="join-fields">
+      <label for="incoming" id="incoming-label">Host’s six-digit code</label>
+      <div class="code-row">
+       <input id="incoming" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" spellcheck="false" placeholder="000000" aria-describedby="code-error">
+       <button id="apply">Connect</button>
+      </div>
+      <p id="code-error" class="field-error" hidden></p>
+     </div>
+     <div id="outgoing-wrap" hidden>
+      <label for="outgoing">Your room code</label>
+      <div class="code-row">
+       <input id="outgoing" type="text" readonly aria-label="Your room code" spellcheck="false">
+       <button id="copy" class="secondary">Copy code</button>
+      </div>
+      <p class="code-note">Share privately with one friend. This room expires after 10 minutes if nobody connects.</p>
+     </div>
+    </div>
+    <div id="feedback" class="feedback">
+     <p id="status" role="status" aria-live="polite" aria-atomic="true">Choose a side to begin.</p>
+     <button id="retry" class="secondary" hidden>Try again</button>
+    </div>
+    <p class="service-note">Free public PeerJS connects the browsers. No accounts or game server.</p>
+   </div>
+  </section>
+  <section id="game" class="game" hidden aria-label="Multiplayer duel">
+   <div class="matchline"><strong id="side"></strong><button id="leave" class="text-button">Leave duel</button></div>
+   <div class="roundline"><span id="round" role="status" aria-live="polite">Waiting for both players</span><button id="rematch" hidden>Request rematch</button></div>
+   <div id="game-feedback"></div>
+   <p id="suspend" class="suspend" hidden>Host tab was hidden. Both players must leave their chambers and ready again.</p>
+   <div id="arena"><div id="player"></div><div id="input" tabindex="0" role="application" aria-label="Duel arena. Move over your chamber to ready, then aim and click to fire."></div></div>
+   <div id="score" class="scoreboard" aria-label="Player health and ammunition">
+    <div class="fighter-score"><span class="fighter-side">Left <span id="left-you" hidden>· You</span></span><div class="fighter-values"><strong><span id="left-health">100</span> <small>health</small></strong><span><b id="left-ammo">6</b> / 6 shots</span></div><progress id="left-meter" max="100" value="100" aria-label="Left health"></progress></div>
+    <div class="fighter-score"><span class="fighter-side">Right <span id="right-you" hidden>· You</span></span><div class="fighter-values"><strong><span id="right-health">100</span> <small>health</small></strong><span><b id="right-ammo">6</b> / 6 shots</span></div><progress id="right-meter" max="100" value="100" aria-label="Right health"></progress></div>
+   </div>
+   <p class="game-instructions">Hold your cursor over your chamber: left for host, right for guest. Both must hold through 3–2–1. Aim and click after FIRE. Six shots each.</p>
+  </section>
+  <details class="connection-help"><summary>How direct play works</summary><div class="help-copy"><p>The host runs all gameplay and has a latency advantage. The guest sends aim and fire inputs. Public STUN helps discover a direct route; PeerJS’s free public service exchanges connection details so six-digit joining works. Its operators host signaling; neither player maintains a backend. Availability depends on that service.</p><p>Gameplay travels directly between browsers, with no TURN relay. Some networks need a relay and cannot connect here. The duel ends when the host leaves. Rematches require both players.</p><p>Keep the host tab visible. Share codes only with the friend you want to connect to.</p></div></details>
+  <footer><span>Original game by Andrew Wolf / <a href="https://www.wolfgames.com/">Wolf Games</a> · <a href="https://www.gunblood.com/">Gunblood.com</a></span><span>Unofficial multiplayer adaptation · Rendered with <a href="https://ruffle.rs/">Ruffle</a></span></footer>
+ </main>
+ <noscript><p class="noscript">Enable JavaScript to connect and play Gunblood.</p></noscript>
+ <script>window.RufflePlayer={config:{autoplay:'on',splashScreen:false,unmuteOverlay:'hidden',allowScriptAccess:false,logLevel:'warn',openUrlMode:'allow'}};</script>
+ <script src="runtime/ruffle.js"></script>
+ <script src="runtime/peerjs-1.5.5.min.js"></script>
+ <script type="module" src="app.mjs"></script>
+</body>
+</html>

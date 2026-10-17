@@ -2,6 +2,14 @@
 
 Verified locally on macOS / Apple Silicon, 2026-10-18. This is casual peer-hosted play; these checks are not an anti-cheat certification or proof of connectivity on arbitrary networks.
 
+## UI refinement
+
+2026-10-18: preserved the existing parchment/oxblood palette and Georgia display type while restructuring the lobby into an introduction and focused pairing panel. Host/join have Back navigation, grouped code/actions, inline validation, loading and clipboard feedback. On narrow screens, selecting a role hides the introduction. The game HUD is aligned to the 720-pixel arena, labels the local side, displays separate health/ammunition groups, retains requested-rematch feedback and removes unavailable actions after departure.
+
+The production client was inspected at desktop size and in real iframe viewports of 320, 390, 560 and 768 CSS pixels. No horizontal overflow occurred; visible buttons were at least 48 CSS pixels tall. The 560-pixel check exercises a width equivalent to a 1120-pixel layout at 200% zoom; it is not a browser zoom test. See `evidence/ui-responsive.json` and `evidence/ui-mobile-error.png`. `ui-check.html` reproduces those viewport checks.
+
+The Impeccable detector found only the existing cream/beige palette. This is intentional preservation of the incumbent Gunblood treatment, not a new palette selection. The normal full gameplay suite passed after restructuring. The final enhanced suite also passed with 100 ms delay in each direction and 20% replaceable-state loss: both HUDs matched authoritative health/ammunition, rematch-request labels persisted and unavailable actions were hidden after departure. Copy confirmation and Back-to-choice navigation passed manually. See `evidence/ui-integration.txt` and `evidence/ui-desktop.png`.
+
 ## Six-digit joining update
 
 2026-10-18: six-digit rooms use the real public PeerJS service (`0.peerjs.com`) with bundled PeerJS 1.5.5. The original native gameplay channels and SWF are unchanged. Both normal and impaired production-client suites passed automatic joining and the full gameplay/rematch/draw/departure sequence. The impaired run is recorded in `evidence/six-digit-local-impaired.txt`.

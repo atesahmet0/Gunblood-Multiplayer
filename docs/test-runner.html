@@ -28,15 +28,18 @@ async function run(impaired){
   await until(()=>info(H).state==='finished','right win',5000);await sync();assert(info(H).left<=0&&info(H).right===100,'guest controls only right character; host applies damage');
   assert(info(G).left===info(H).left&&info(G).right===100,'guest health equals host without duplicate damage');
   await sleep(1200);await until(()=>info(G).heads.every((p,i)=>Math.hypot(p.x-info(H).heads[i].x,p.y-info(H).heads[i].y)<.1),'settled pose convergence');assert(true,'final head transforms converge within 0.1 stage pixel');
+  for(const w of [H,G])for(const [i,side] of ['left','right'].entries()){
+   const snap=api(H,'mpSnapshot');assert(Number(el(w,'#'+side+'-health').textContent)===Math.max(0,Math.round(snap.health[i]))&&Number(el(w,'#'+side+'-ammo').textContent)===snap.ammo[i],'HUD '+side+' health/ammunition matches authority on '+(w===H?'host':'guest'));
+  }
   note('Right win ammo: '+JSON.stringify(api(H,'mpSnapshot').ammo));
-  el(G,'#rematch').click();await sleep(400);assert(info(H).state==='finished','one player cannot force rematch');el(H,'#rematch').click();
+  el(G,'#rematch').click();await sleep(400);assert(info(H).state==='finished','one player cannot force rematch');assert(el(G,'#rematch').disabled&&el(G,'#rematch').textContent==='Rematch requested','rematch request label persists through snapshots');el(H,'#rematch').click();
   await until(()=>info(H)?.state==='waiting'&&info(G)?.state==='waiting'&&info(H)?.left===100&&info(G)?.left===100,'mutual rematch',30000);await sleep(500);assert(true,'mutual rematch creates fresh arenas');
   ready();await until(()=>info(H)?.state==='playing','rematch ready');
   // Fire at the sky, with both players shooting above the opposite character.
   for(let i=0;i<7;i++){pointer(H,600,0,true);pointer(G,100,0,true);await sleep(350);}
   await until(()=>info(H)?.state==='finished','ammo draw',7000);await sync();const end=api(H,'mpSnapshot');assert(end.result==='draw'&&end.ammo[0]===0&&end.ammo[1]===0,'six-shot limit and empty-ammo draw');
   const ammo=JSON.stringify(end.ammo);for(let i=0;i<20;i++){pointer(H,600,0,true);pointer(G,100,0,true);}await sleep(500);assert(JSON.stringify(api(H,'mpSnapshot').ammo)===ammo,'extra fire cannot bypass ammunition or finished round');
-  el(H,'#leave').click();await until(()=>/left|disconnected/.test(el(G,'#status').textContent),'host departure');assert(true,'host departure ends guest session');
+  el(H,'#leave').click();await until(()=>/left|disconnected/.test(el(G,'#status').textContent),'host departure');assert(true,'host departure ends guest session');assert(el(G,'#rematch').hidden&&el(G,'#leave').hidden,'ended session hides unavailable game actions');
   note('SUITE PASSED '+(impaired?'100 ms each direction, 20% state loss':'normal transport'));
  }catch(e){note('FAIL '+e.message);note('Host root '+JSON.stringify(api(H,'mpPing')));note('Guest root '+JSON.stringify(api(G,'mpPing')));note('Host: '+JSON.stringify(info(H)));note('Guest: '+JSON.stringify(info(G)));note('Host UI: '+el(H,'#status')?.textContent);note('Guest UI: '+el(G,'#status')?.textContent);}
  finally{document.querySelectorAll('button').forEach(b=>b.disabled=false);}

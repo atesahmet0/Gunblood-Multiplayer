@@ -1,0 +1,12 @@
+<!doctype html><meta charset="utf-8"><title>Gunblood responsive UI checks</title>
+<style>body{font:14px system-ui;margin:16px;background:#e4e4e4}button{padding:10px;margin:0 8px 12px 0}iframe{display:block;border:1px solid #777;width:390px;height:850px}pre{position:absolute;left:440px;top:160px;white-space:pre-wrap;max-width:740px;max-height:650px;overflow:auto}</style>
+<h1>Responsive client checks</h1><p>Production client in a real narrow viewport. Buttons resize the frame; inspect checks visible layout boundaries and field accessibility.</p>
+<button id="small">320 px</button><button id="mobile">390 px</button><button id="tablet">768 px</button><button id="desktop">1120 px</button><button id="zoom">560 px (1120 px at 200%)</button><button id="inspect">Inspect layout</button><pre id="report">Ready</pre><iframe title="Responsive multiplayer client" src="./"></iframe>
+<script>
+const f=document.querySelector('iframe');for(const [id,width] of Object.entries({small:320,mobile:390,tablet:768,desktop:1120,zoom:560}))document.querySelector('#'+id).onclick=()=>f.style.width=width+'px';
+document.querySelector('#inspect').onclick=()=>{
+ const d=f.contentDocument,w=f.contentWindow;const visible=e=>e.getClientRects().length>0;
+ const code=d.querySelector('#incoming');const rect=code.getBoundingClientRect();
+ document.querySelector('#report').textContent=JSON.stringify({viewport:d.documentElement.clientWidth,scrollWidth:d.documentElement.scrollWidth,noHorizontalOverflow:d.documentElement.scrollWidth<=d.documentElement.clientWidth,choiceVisible:visible(d.querySelector('#choice-screen')),exchangeVisible:visible(d.querySelector('#exchange')),backVisible:visible(d.querySelector('#back')),codeField:{visible:visible(code),width:rect.width,invalid:code.getAttribute('aria-invalid'),value:code.value},errorVisible:visible(d.querySelector('#code-error')),buttons:[...d.querySelectorAll('button')].filter(visible).map(e=>({text:e.textContent.trim(),width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height})),status:d.querySelector('#status').textContent},null,2);
+};
+</script>

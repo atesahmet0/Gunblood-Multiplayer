@@ -7,7 +7,7 @@ let peer,role,player,poll,seq=0,lastAim=-1,lastFire=-1,round=1,lastSnapshot=-1,l
 let pointer={x:0,y:0,ready:false,fire:false};
 function status(text,error=false){$('#status').textContent=text;$('#status').classList.toggle('error',error);}
 function call(name,...args){return player?.ruffle().callExternalInterface(name,...args);}
-function error(message){status(message,true);$('#retry').hidden=false;ended=true;clearInterval(poll);call('mpSetPaused',true);player?.pause();}
+function error(message){status(message,true);$('#retry').hidden=false;ended=true;$('#rematch').hidden=true;$('#leave').hidden=true;clearInterval(poll);call('mpSetPaused',true);player?.pause();}
 async function action(fn){try{await fn();}catch(e){status(e.message,true);$('#retry').hidden=false;}}
 async function loadPlayer(){
  player=RufflePlayer.newest().createPlayer();$('#player').replaceChildren(player);await player.load({url:'gunblood-multiplayer.swf',allowScriptAccess:true});
@@ -23,14 +23,14 @@ async function startRound(number){
  else call('mpSetPaused',!remoteSceneReady||document.hidden); // Resume only after guest confirms the scene.
 }
 async function connected(){
- $('#pairing').hidden=true;$('#exchange').hidden=true;$('#game').hidden=false;$('#retry').hidden=true;
+ $('#pairing').hidden=true;$('#exchange').hidden=true;$('#game').hidden=false;$('#retry').hidden=true;document.body.dataset.screen='game';$('#game-feedback').append($('#feedback'));$('#left-you').hidden=role!=='host';$('#right-you').hidden=role!=='guest';
  $('#side').textContent=role==='host'?'You are LEFT · Host':'You are RIGHT · Guest';
  status('Connected. Initializing both arenas…');
  try{await loadPlayer();if(ended)return;await startRound(1);if(ended)return;poll=setInterval(tick,80);}catch(e){error(e.message);peer?.close();}
 }
 function setPeer(r){
  role=r;ended=false;
- peer=new Peer(role,{open:connected,error,message:onMessage,snapshot:onSnapshot,progress:status,code:code=>{ $('#outgoing').value=code;$('#outgoing-wrap').hidden=false;status('Room ready. Share this six-digit code and keep this tab open.'); }});
+ peer=new Peer(role,{open:connected,error,message:onMessage,snapshot:onSnapshot,progress:status,code:code=>{ $('#outgoing').value=code;$('#outgoing-wrap').hidden=false;$('#exchange').removeAttribute('aria-busy');$('#step').textContent='Invite your friend';status('Room ready. Share this six-digit code and keep this tab open.'); }});
 }
 function onMessage(type,data,channel){
  if(ended||!data)return;
@@ -54,10 +54,16 @@ function onMessage(type,data,channel){
  if(type==='startRound'&&role==='guest'&&data.round===round+1)action(()=>startRound(data.round));
 }
 function showState(s){
- $('#round').textContent=s.paused?'Paused':s.state==='finished'?(s.result==='draw'?'Draw':s.result==='left'?'Left wins':'Right wins'):s.state==='playing'?'FIRE!':s.state==='countdown'?String(3-Math.min(2,Math.floor(s.count/20))):`Ready: left ${s.ready?.[0]?'yes':'no'} · right ${s.ready?.[1]?'yes':'no'}`;
- $('#score').textContent=`Left: ${Math.max(0,Math.round(s.health[0]))} health · ${s.ammo[0]} shots     |     Right: ${Math.max(0,Math.round(s.health[1]))} health · ${s.ammo[1]} shots`;
- if(s.state==='finished'){$('#rematch').hidden=false;$('#rematch').textContent=theirRematch?'Accept rematch':'Request rematch';}
+ const label=s.paused?'Paused':s.state==='finished'?(s.result==='draw'?'Draw':s.result==='left'?'Left wins':'Right wins'):s.state==='playing'?'FIRE!':s.state==='countdown'?String(3-Math.min(2,Math.floor(s.count/20))):`Ready: left ${s.ready?.[0]?'yes':'no'} · right ${s.ready?.[1]?'yes':'no'}`;
+ if($('#round').textContent!==label)$('#round').textContent=label;
+ for(const [i,side] of ['left','right'].entries()){
+  const health=Math.max(0,Math.round(s.health[i]));
+  $('#'+side+'-health').textContent=health;$('#'+side+'-ammo').textContent=s.ammo[i];$('#'+side+'-meter').value=health;
+ }
+ if(s.state==='playing'||s.state==='finished')$('#suspend').hidden=true;
+ if(s.state==='finished'){$('#rematch').hidden=false;$('#rematch').textContent=myRematch?'Rematch requested':theirRematch?'Accept rematch':'Request rematch';}
 }
+
 function onSnapshot(s){
  if(ended||starting||role!=='guest'||s.round!==round||s.version!==1||!Number.isSafeInteger(s.tick)||s.tick<=lastSnapshot)return;
  if(!Array.isArray(s.health)||!Array.isArray(s.ammo)||!s.tree)return;
@@ -82,24 +88,36 @@ async function tick(){
 function maybeRematch(){
  if(role==='host'&&myRematch&&theirRematch){peer.send('startRound',{round:round+1});action(()=>startRound(round+1));}
 }
+function chooseMode(mode){
+ document.body.dataset.screen=mode;$('#choice-screen').hidden=true;$('#exchange').hidden=false;$('#join-fields').hidden=mode==='host';$('#outgoing-wrap').hidden=true;$('#retry').hidden=true;
+ $('#step').textContent=mode==='host'?'Create your room':'Enter your friend’s code';
+ $('#instruction').textContent=mode==='host'?'Share your six-digit code. Your friend enters it under Join Game; you connect automatically.':'Ask the host for their six-digit code, then connect.';
+}
 $('#host').onclick=()=>action(async()=>{
- $('#host').disabled=true;$('#join').disabled=true;setPeer('host');$('#exchange').hidden=false;$('#incoming').hidden=true;$('#incoming-label').hidden=true;$('#apply').hidden=true;
- $('#step').textContent='Invite your friend';$('#instruction').textContent='Share your six-digit code. Your friend enters it under Join Game; you connect automatically.';status('Reserving your room through PeerJS public signaling…');
- try{await peer.host();}catch(e){peer.close();throw e;}
+ chooseMode('host');setPeer('host');$('#exchange').setAttribute('aria-busy','true');$('#step').focus();status('Reserving your room through PeerJS public signaling…');
+ try{await peer.host();}catch(e){peer.close();$('#exchange').removeAttribute('aria-busy');throw e;}
 });
 $('#join').onclick=()=>{
- $('#host').disabled=true;$('#join').disabled=true;$('#exchange').hidden=false;$('#step').textContent='Enter your friend’s code';$('#instruction').textContent='Ask the host for their six-digit code, then connect.';status('Waiting for the host’s six-digit code.');$('#incoming').focus();
+ chooseMode('join');status('Waiting for the host’s six-digit code.');$('#incoming').focus();
 };
+$('#back').onclick=()=>{peer?.close();location.reload();};
 $('#apply').onclick=()=>action(async()=>{
- const code=roomCode($('#incoming').value);$('#apply').disabled=true;setPeer('guest');
+ let code;
+ try{code=roomCode($('#incoming').value);}catch(e){$('#incoming').setAttribute('aria-invalid','true');$('#code-error').textContent=e.message;$('#code-error').hidden=false;$('#incoming').focus();status('Check the six-digit code above.',true);return;}
+ $('#incoming').removeAttribute('aria-invalid');$('#code-error').hidden=true;
+ $('#apply').disabled=true;$('#apply').textContent='Connecting…';$('#incoming').readOnly=true;$('#retry').hidden=true;setPeer('guest');
  status('Finding the host through PeerJS public signaling…');
  try{await peer.join(code);}catch(e){peer.close();throw e;}
 });
+$('#incoming').oninput=()=>{$('#incoming').removeAttribute('aria-invalid');$('#code-error').hidden=true;if(!peer)status('Waiting for the host’s six-digit code.');};
 $('#incoming').onkeydown=e=>{if(e.key==='Enter')$('#apply').click();};
-$('#copy').onclick=()=>action(async()=>{await navigator.clipboard.writeText($('#outgoing').value);status('Code copied. Send it privately to your friend.');});
+$('#copy').onclick=async()=>{
+ try{await navigator.clipboard.writeText($('#outgoing').value);$('#copy').textContent='Copied';status('Code copied. Send it privately to your friend.');setTimeout(()=>$('#copy').textContent='Copy code',2000);}
+ catch{$('#outgoing').focus();$('#outgoing').select();status('Select the room code and copy it manually. Clipboard access is unavailable.',true);}
+};
 $('#retry').onclick=()=>{peer?.close();location.reload();};
 $('#leave').onclick=()=>{peer?.close();error('You left the duel. Retry to start a fresh session.');};
-$('#rematch').onclick=()=>{myRematch=true;$('#rematch').disabled=true;peer.send('rematch',{round});status('Rematch requested. Waiting for your friend.');maybeRematch();};
+$('#rematch').onclick=()=>{myRematch=true;$('#rematch').disabled=true;$('#rematch').textContent='Rematch requested';peer.send('rematch',{round});status('Rematch requested. Waiting for your friend.');maybeRematch();};
 function move(e){
  const b=$('#arena').getBoundingClientRect();pointer.x=(e.clientX-b.left)*720/b.width;pointer.y=(e.clientY-b.top)*425/b.height;
  const own=role==='host'?pointer.x<130:pointer.x>590;
