@@ -1,0 +1,11 @@
+{
+  "verified_at": "2026-10-17T22:26:41.042094+00:00",
+  "site": "https://atesahmet0.github.io/Gunblood-Multiplayer/",
+  "implementation_commit": "e46f99b58e7e0496e9ebe2722f2445a5c53f4247",
+  "pages_run": 39074985920,
+  "swf_sha256": "ee80106d3001fc0c76859dbf4495ae9dca857c86b6a89c4a94ed462849ee826b",
+  "lobby_matches_local": true,
+  "live_suite": "passed: six-digit pairing, full gameplay, rematch, draw, departure; 100 ms each direction and 20% replaceable-state loss",
+  "local_independent_browsers": "Chromium host and Firefox 158.0 guest: six-digit pairing, duel, matching state and poses",
+  "network_coverage": "one physical machine and network; no separate-network test"
+}

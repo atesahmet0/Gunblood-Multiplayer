@@ -10,6 +10,8 @@ Independent **in-app Chromium host ↔ Firefox 158.0 guest** passed automatic si
 
 Six added source tests cover exact six-digit format and leading zeros, random code format, reservation collisions, STUN-only bootstrap configuration, incompatible/extra guests, attempt-bound handshake responses, missing rooms, expiry, signaling unavailability and cleanup after a game connects. Collision, expiry and outage tests use a fake broker and clock; they do not deliberately disrupt the public service. No new separate-network coverage was available.
 
+The deployed six-digit Pages site also passed the full impaired suite. Its SWF checksum matched `ee80106d3001fc0c76859dbf4495ae9dca857c86b6a89c4a94ed462849ee826b`, and deployed `lobby.mjs` matched the tested local file byte for byte. See `evidence/six-digit-deployment.json`, `evidence/six-digit-live-integration.txt`, and `evidence/six-digit-live-join.jpg`.
+
 The browser checks below document the original manual-pairing release; its Chrome/Firefox pairing coverage predates the six-digit update.
 
 ## Automated source checks
