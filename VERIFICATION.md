@@ -32,7 +32,7 @@ An independent-browser duel also passed with **Chrome 155.0.8059.80** as guest a
 
 - All tests used one physical machine and one physical network. No separate physical networks or mobile browsers were available for this run. Same-machine success does not establish NAT traversal across networks.
 - Real ICE-gathering timeouts occurred during retries and produced the retry error. Later fresh pairings succeeded. No TURN server is configured; networks requiring a relay remain unsupported.
-- Invalid/stale/incompatible codes and simultaneous-death draw are covered by source tests. A deterministic simultaneous lethal hit was not forced in a rendered duel.
+- Invalid/stale/incompatible codes are covered by source tests and were also rejected with the expected messages on the live Pages UI. Simultaneous-death draw is covered by source tests; a deterministic simultaneous lethal hit was not forced in a rendered duel.
 - The host is trusted and has a latency advantage. The guest renders delayed authoritative snapshots; this release does not add prediction, rollback, lag compensation or host migration.
 - Original game assets, links and ad hooks remain in the SWF. Availability of externally hosted developer ads is outside this repository's control.
 
@@ -40,4 +40,4 @@ An independent-browser duel also passed with **Chrome 155.0.8059.80** as guest a
 
 Serve `docs/` locally and open `test-runner.html` for the production-client integration suite. `control-test.html` supports manual pairing between independent browsers with pointer-event test controls. `simulation-test.html` isolates the compiled SWF; `bridge-test.html` isolates bridge startup and snapshot transfer. Keep the host document visible while gameplay checks run.
 
-The final compiled SWF checksum is recorded in `docs/build.json`. Publication and live-site verification are recorded separately in `evidence/deployment.json` once deployment completes.
+The final compiled SWF checksum is recorded in `docs/build.json`. The deployed checksum matches the tested local SWF. The live Pages pairing/gameplay/rematch/draw/departure suite also passed with 100 ms delay each way and 20% replaceable-state loss. See `evidence/deployment.json` and `evidence/live-integration.txt`.

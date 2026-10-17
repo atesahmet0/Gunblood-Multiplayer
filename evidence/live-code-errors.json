@@ -1,0 +1,5 @@
+{
+  "malformed": "Invalid connection code. Paste the entire Gunblood code.",
+  "stale": "Expired or invalid code. Generate a fresh offer. Check both device clocks.",
+  "incompatible": "Incompatible build. Both players must reload the same site."
+}

@@ -1,0 +1,21 @@
+{
+  "verified_at_utc": "2026-10-17T21:48:54.740971+00:00",
+  "repository": "https://github.com/atesahmet0/Gunblood-Multiplayer",
+  "site": "https://atesahmet0.github.io/Gunblood-Multiplayer/",
+  "tested_source_commit": "306fa539dac576ba860d3761873013959a61e845",
+  "pages_workflow": "https://github.com/atesahmet0/Gunblood-Multiplayer/actions/runs/39072317325",
+  "swf_sha256": "ee80106d3001fc0c76859dbf4495ae9dca857c86b6a89c4a94ed462849ee826b",
+  "deployed_checksum_matches_local": true,
+  "live_suite": "PASSED: manual pairing, readiness, guest win, pose convergence, mutual rematch, ammunition draw, extra-fire rejection, host departure; 100 ms delay each direction and 20 percent replaceable-state loss",
+  "live_error_feedback": [
+    "malformed code",
+    "expired code",
+    "incompatible build"
+  ],
+  "separate_physical_networks_tested": false,
+  "browser_versions": {
+    "Chrome": "155.0.8059.80",
+    "Firefox": "158.0"
+  },
+  "original_source_repository_clean": true
+}
