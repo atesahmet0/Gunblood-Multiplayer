@@ -73,3 +73,7 @@ Independent visual review resolved its masthead-font finding. Automated comp fid
 ## Fullscreen and attribution (2026-10-18)
 
 Verified native fullscreen entry and exit for both host and guest in the in-app Chromium browser with real paired Ruffle players. At 1280×720, the arena retained 720:425 proportions, HUD and exit controls remained visible, and fullscreen content fit without vertical scrolling. All 18 source tests passed. Footer adaptation credit now links the user-requested `atesahmet0` name to their GitHub profile; original creator credit remains. Unsupported fullscreen environments hide the control; rejected requests show a recovery message.
+
+## Hosted analytics (2026-10-18)
+
+Added separate free hosted GoatCounter account and nonblocking page/game event integration. Only the host reports games on first FIRE and completion; rematches are counted separately as a subset. All 22 source tests pass, including repeated snapshots, pause/resume, rematches, privacy controls, safe URLs and blocked analytics. Localhost and production test sessions are excluded. No PostHog organization or billing settings changed.

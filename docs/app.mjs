@@ -1,7 +1,12 @@
+import {createAnalytics,createRoundAnalytics} from './analytics.mjs';
+import {ANALYTICS_ACCOUNT} from './analytics-config.mjs';
 import {roomCode} from './lobby.mjs';
 import {Peer} from './peer.mjs';
 import {BUILD,input} from './protocol.mjs';
 const $=s=>document.querySelector(s);
+const capture=createAnalytics({location,navigator,account:ANALYTICS_ACCOUNT});
+capture('$pageview');
+let trackRound=createRoundAnalytics(capture);
 let remoteSceneReady=false;
 let peer,role,player,poll,seq=0,lastAim=-1,lastFire=-1,round=1,lastSnapshot=-1,lastState='',myRematch=false,theirRematch=false,ended=false,busy=false,starting=false,lastRemote=0,hostPaused=false,needLeave=false;
 let pointer={x:0,y:0,ready:false,fire:false};
@@ -29,7 +34,7 @@ async function connected(){
  try{await loadPlayer();if(ended)return;await startRound(1);if(ended)return;poll=setInterval(tick,80);}catch(e){error(e.message);peer?.close();}
 }
 function setPeer(r){
- role=r;ended=false;
+ role=r;ended=false;trackRound=createRoundAnalytics(capture);
  peer=new Peer(role,{open:connected,error,message:onMessage,snapshot:onSnapshot,progress:status,code:code=>{ $('#outgoing').value=code;$('#outgoing-wrap').hidden=false;$('#exchange').removeAttribute('aria-busy');$('#step').textContent='Invite your friend';status('Room ready. Share this six-digit code and keep this tab open.'); }});
 }
 function onMessage(type,data,channel){
@@ -76,7 +81,7 @@ async function tick(){
    if(Date.now()-lastRemote>1500)call('mpInput',1,0,0,false,false);
    call('mpInput',0,pointer.x,pointer.y,pointer.ready&&!hostPaused,pointer.fire&&!hostPaused);
    pointer.fire=false;
-   const s=call('mpSnapshot');if(!s)return;s.round=round;showState(s);
+   const s=call('mpSnapshot');if(!s)return;s.round=round;showState(s);trackRound(round,s);
    const key=s.state+':'+s.result+':'+s.paused;
    if(key!==lastState){lastState=key;peer.send('round',{round,state:s.state,result:s.result,count:s.count,paused:s.paused,health:s.health,ammo:s.ammo});}
    await peer.snapshot(s);
