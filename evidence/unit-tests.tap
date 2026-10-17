@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: guest cannot inject inputs or execute physics
+ok 1 - guest cannot inject inputs or execute physics
+  ---
+  duration_ms: 2.139042
+  type: 'test'
+  ...
+# Subtest: waiting cannot fire; both readiness and full countdown required
+ok 2 - waiting cannot fire; both readiness and full countdown required
+  ---
+  duration_ms: 1.901917
+  type: 'test'
+  ...
+# Subtest: fire is latched across later aim updates; bursts coalesce per tick
+ok 3 - fire is latched across later aim updates; bursts coalesce per tick
+  ---
+  duration_ms: 0.6805
+  type: 'test'
+  ...
+# Subtest: both inputs run before damage resolution; simultaneous deaths draw
+ok 4 - both inputs run before damage resolution; simultaneous deaths draw
+  ---
+  duration_ms: 0.974
+  type: 'test'
+  ...
+# Subtest: wins and empty-ammo draw use host state
+ok 5 - wins and empty-ammo draw use host state
+  ---
+  duration_ms: 1.794292
+  type: 'test'
+  ...
+# Subtest: host suspension freezes tick and resets both readiness flags
+ok 6 - host suspension freezes tick and resets both readiness flags
+  ---
+  duration_ms: 0.526208
+  type: 'test'
+  ...
+# Subtest: firePlayerShot enforces eight ticks and six shots
+ok 7 - firePlayerShot enforces eight ticks and six shots
+  ---
+  duration_ms: 2.808792
+  type: 'test'
+  ...
+# Subtest: Shoot2 enforces eight ticks and six shots
+ok 8 - Shoot2 enforces eight ticks and six shots
+  ---
+  duration_ms: 0.760041
+  type: 'test'
+  ...
+# Subtest: versioned offer and answer roundtrip
+ok 9 - versioned offer and answer roundtrip
+  ---
+  duration_ms: 2.206625
+  type: 'test'
+  ...
+# Subtest: reject malformed, wrong type, different session, stale and future codes
+ok 10 - reject malformed, wrong type, different session, stale and future codes
+  ---
+  duration_ms: 0.668584
+  type: 'test'
+  ...
+# Subtest: guest messages allow finite inputs only, discard claimed damage and side
+ok 11 - guest messages allow finite inputs only, discard claimed damage and side
+  ---
+  duration_ms: 0.827667
+  type: 'test'
+  ...
+# Subtest: winner resolved from both post-tick health values
+ok 12 - winner resolved from both post-tick health values
+  ---
+  duration_ms: 0.80575
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 88.939334

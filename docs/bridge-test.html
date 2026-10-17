@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>Local bridge gate</title>
+<style>body{background:#222;color:#eee;font:14px system-ui}ruffle-player{width:720px;height:425px}pre{white-space:pre-wrap}#players{display:flex;flex-wrap:wrap}button{padding:10px}</style>
+<h1>Local ActionScript bridge gate</h1><button id="start">Start host and guest</button><button id="snapshot">Mirror snapshot</button><button id="inspect">Inspect both</button><pre id="status">Loading</pre><div id="players"><div id="host"></div><div id="guest"></div></div>
+<script>window.RufflePlayer={config:{autoplay:'on',splashScreen:false,unmuteOverlay:'hidden',allowScriptAccess:true,logLevel:'warn',openUrlMode:'allow'}};</script><script src="runtime/ruffle.js"></script><script>
+const players=[],status=document.querySelector('#status');
+const call=(p,n,...a)=>p.ruffle().callExternalInterface(n,...a);
+(async()=>{for(const role of ['host','guest']){let p=RufflePlayer.newest().createPlayer();document.getElementById(role).append(p);await p.load({url:'gunblood-multiplayer.swf'});players.push(p);}status.textContent='Loaded. Start after initialization.';})();
+document.querySelector('#start').onclick=()=>{try{status.textContent=JSON.stringify(players.map((p,i)=>[call(p,'mpPing'),call(p,'mpPrepare'),call(p,'mpStart',i?'guest':'host')]),null,2);}catch(e){status.textContent=e.stack}};
+document.querySelector('#snapshot').onclick=()=>{try{let s=call(players[0],'mpSnapshot');status.textContent=JSON.stringify({snapshot:!!s,children:s?.tree?.c?.length,applied:call(players[1],'mpApply',s)},null,2);}catch(e){status.textContent=e.stack}};
+document.querySelector('#inspect').onclick=()=>{status.textContent=JSON.stringify(players.map(p=>({root:call(p,'mpPing'),game:call(p,'mpInspect')})),null,2);};
+</script>

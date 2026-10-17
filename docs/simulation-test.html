@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>Compiled SWF simulation test</title><style>body{background:#222;color:white;font:14px system-ui}ruffle-player{width:600px;height:354px}pre{max-height:210px;overflow:auto}#players{display:flex;flex-wrap:wrap}button{padding:9px}pre{white-space:pre-wrap}</style>
+<h1>Compiled SWF simulation test</h1><button id="start">Start</button><button id="ready">Both ready</button><button id="unready">Left leaves chamber</button><button id="left">Left fires at right head</button><button id="right">Right fires at left head</button><button id="spam">Right fires 30 times</button><button id="pause">Pause / resume</button><button id="inspect">Inspect</button><pre id="status">Loading</pre><div id="players"><div id="host"></div><div id="guest"></div></div>
+<script>window.RufflePlayer={config:{autoplay:'on',splashScreen:false,unmuteOverlay:'hidden',allowScriptAccess:true,logLevel:'warn',openUrlMode:'allow'}};</script><script src="runtime/ruffle.js"></script><script>
+const players=[],out=document.querySelector('#status');const call=(i,n,...a)=>players[i]?.ruffle().callExternalInterface(n,...a);let mirror,paused=false;
+(async()=>{for(const r of ['host','guest']){let p=RufflePlayer.newest().createPlayer();document.getElementById(r).append(p);await p.load({url:'gunblood-multiplayer.swf'});players.push(p);}out.textContent='Loaded';})();
+function shot(side){let h=call(0,'mpInspect').heads[1-side];call(0,'mpInput',side,h.x,h.y,false,true);}
+function inspect(){let s=call(0,'mpSnapshot');out.textContent=JSON.stringify({host:call(0,'mpInspect'),guest:call(1,'mpInspect'),ammo:s?.ammo,result:s?.result,state:s?.state,bytes:JSON.stringify(s)?.length},null,2);}
+document.querySelector('#start').onclick=()=>{call(0,'mpPrepare');call(1,'mpPrepare');call(0,'mpStart','host');call(1,'mpStart','guest');clearInterval(mirror);mirror=setInterval(()=>{const s=call(0,'mpSnapshot');if(s)call(1,'mpApply',s);inspect();},100);};
+document.querySelector('#ready').onclick=()=>{call(0,'mpInput',0,85,385,true,false);call(0,'mpInput',1,635,385,true,false);};
+document.querySelector('#unready').onclick=()=>call(0,'mpInput',0,300,200,false,false);
+document.querySelector('#left').onclick=()=>shot(0);
+document.querySelector('#right').onclick=()=>shot(1);
+document.querySelector('#spam').onclick=()=>{for(let i=0;i<30;i++)shot(1);};
+document.querySelector('#pause').onclick=()=>{paused=!paused;call(0,'mpSetPaused',paused);};
+document.querySelector('#inspect').onclick=inspect;
+</script>

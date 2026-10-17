@@ -1,0 +1,46 @@
+<!doctype html><meta charset="utf-8"><title>Gunblood integration checks</title><style>body{font:14px system-ui;background:#eee;color:#222}iframe{width:750px;height:850px;border:1px solid #888}#frames{display:flex}pre{max-height:230px;overflow:auto;white-space:pre-wrap}button{padding:12px}</style><h1>Production client integration checks</h1><p>Two isolated documents, real WebRTC and compiled SWF. Same machine. Test events exercise the production pointer handlers. No gameplay state is injected.</p><button id="run">Run suite</button><button id="impaired">Run with 100 ms delay and 20% state loss</button><button id="suspension">Prepare host-tab suspension test</button><button id="inspect">Inspect roots</button><pre id="report">Ready</pre><div id="frames"></div>
+<script>
+const report=document.querySelector('#report');let H,G,log=[];const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function note(s){log.push(s);report.textContent=log.join('\n');report.scrollTop=report.scrollHeight;}
+async function until(fn,label,ms=20000){let t=Date.now();while(Date.now()-t<ms){try{let v=fn();if(v)return v;}catch{}await sleep(100);}throw Error('Timed out: '+label);}
+function assert(v,s){if(!v)throw Error(s);note('PASS '+s);}
+const el=(w,s)=>w.document.querySelector(s);const api=(w,n,...a)=>el(w,'ruffle-player')?.ruffle().callExternalInterface(n,...a);
+const info=w=>api(w,'mpInspect');
+function pointer(w,x,y,fire=false){let e=el(w,'#input'),r=e.getBoundingClientRect();let opts={bubbles:true,clientX:r.left+x*r.width/720,clientY:r.top+y*r.height/425,pointerId:1,pointerType:'mouse'};e.dispatchEvent(new w.PointerEvent('pointermove',opts));if(fire)e.dispatchEvent(new w.PointerEvent('pointerdown',opts));}
+function ready(){pointer(H,350,200);pointer(G,350,200);pointer(H,85,385);pointer(G,635,385);}
+async function sync(){await until(()=>info(H)?.state===info(G)?.state&&info(H)?.left===info(G)?.left&&info(H)?.right===info(G)?.right,'matching state');}
+async function init(impaired){
+ document.querySelector('#frames').replaceChildren();for(const role of ['host','guest']){let f=document.createElement('iframe');f.src='./?test='+Date.now()+role;f.title=role;document.querySelector('#frames').append(f);await new Promise(r=>f.onload=r);if(role==='host')H=f.contentWindow;else G=f.contentWindow;}
+ if(impaired)for(const w of [H,G]){let send=w.RTCDataChannel.prototype.send;w.RTCDataChannel.prototype.send=function(data){if(this.label==='state'&&Math.random()<.2)return;setTimeout(()=>{if(this.readyState==='open')send.call(this,data);},100);};}
+ el(H,'#host').click();let offer=await until(()=>el(H,'#outgoing').value,'offer',60000);el(G,'#join').click();el(G,'#incoming').value=offer;el(G,'#apply').click();let answer=await until(()=>el(G,'#outgoing').value,'answer',60000);el(H,'#incoming').value=answer;el(H,'#apply').click();
+ await until(()=>info(H)?.role==='host'&&info(G)?.role==='guest'&&el(H,'#score').textContent,'both initialized',30000);
+ note('PASS manual offer/answer and both scenes initialized');
+}
+async function run(impaired){
+ log=[];report.textContent='Running…';document.querySelectorAll('button').forEach(b=>b.disabled=true);
+ try{
+  await init(impaired);await sleep(1000);
+  pointer(G,90,145,true);await sleep(500);assert(api(H,'mpSnapshot').ammo[1]===6,'guest cannot shoot before readiness');
+  ready();await until(()=>info(H)?.state==='countdown','countdown');pointer(G,350,200);await until(()=>info(H)?.state==='waiting','reset');assert(true,'leaving chamber resets countdown');
+  ready();await until(()=>info(H)?.state==='playing','playing');note('PASS both-ready countdown reaches FIRE');
+  for(let i=0;i<6&&info(H).state!=='finished';i++){let p=info(H).heads[0];pointer(G,p.x,p.y,true);await sleep(650);}
+  await until(()=>info(H).state==='finished','right win',5000);await sync();assert(info(H).left<=0&&info(H).right===100,'guest controls only right character; host applies damage');
+  assert(info(G).left===info(H).left&&info(G).right===100,'guest health equals host without duplicate damage');
+  await sleep(1200);await until(()=>info(G).heads.every((p,i)=>Math.hypot(p.x-info(H).heads[i].x,p.y-info(H).heads[i].y)<.1),'settled pose convergence');assert(true,'final head transforms converge within 0.1 stage pixel');
+  note('Right win ammo: '+JSON.stringify(api(H,'mpSnapshot').ammo));
+  el(G,'#rematch').click();await sleep(400);assert(info(H).state==='finished','one player cannot force rematch');el(H,'#rematch').click();
+  await until(()=>info(H)?.state==='waiting'&&info(G)?.state==='waiting'&&info(H)?.left===100&&info(G)?.left===100,'mutual rematch',30000);await sleep(500);assert(true,'mutual rematch creates fresh arenas');
+  ready();await until(()=>info(H)?.state==='playing','rematch ready');
+  // Fire at the sky, with both players shooting above the opposite character.
+  for(let i=0;i<7;i++){pointer(H,600,0,true);pointer(G,100,0,true);await sleep(350);}
+  await until(()=>info(H)?.state==='finished','ammo draw',7000);await sync();const end=api(H,'mpSnapshot');assert(end.result==='draw'&&end.ammo[0]===0&&end.ammo[1]===0,'six-shot limit and empty-ammo draw');
+  const ammo=JSON.stringify(end.ammo);for(let i=0;i<20;i++){pointer(H,600,0,true);pointer(G,100,0,true);}await sleep(500);assert(JSON.stringify(api(H,'mpSnapshot').ammo)===ammo,'extra fire cannot bypass ammunition or finished round');
+  el(H,'#leave').click();await until(()=>/left|disconnected/.test(el(G,'#status').textContent),'host departure');assert(true,'host departure ends guest session');
+  note('SUITE PASSED '+(impaired?'100 ms each direction, 20% state loss':'normal transport'));
+ }catch(e){note('FAIL '+e.message);note('Host root '+JSON.stringify(api(H,'mpPing')));note('Guest root '+JSON.stringify(api(G,'mpPing')));note('Host: '+JSON.stringify(info(H)));note('Guest: '+JSON.stringify(info(G)));note('Host UI: '+el(H,'#status')?.textContent);note('Guest UI: '+el(G,'#status')?.textContent);}
+ finally{document.querySelectorAll('button').forEach(b=>b.disabled=false);}
+}
+document.querySelector('#suspension').onclick=async()=>{log=[];await init(false);await sleep(1000);ready();await until(()=>info(H)?.state==='playing','playing');note('Ready for tab-hide test. Switch to another tab and return; then inspect roots.');};
+document.querySelector('#inspect').onclick=()=>{note('Host root '+JSON.stringify(api(H,'mpPing')));note('Guest root '+JSON.stringify(api(G,'mpPing')));note('Host game '+JSON.stringify(info(H)));note('Guest game '+JSON.stringify(info(G)));};
+document.querySelector('#run').onclick=()=>run(false);document.querySelector('#impaired').onclick=()=>run(true);
+</script>

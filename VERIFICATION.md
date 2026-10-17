@@ -1,0 +1,43 @@
+# Verification
+
+Verified locally on macOS / Apple Silicon, 2026-10-18. This is casual peer-hosted play; these checks are not an anti-cheat certification or proof of connectivity on arbitrary networks.
+
+## Automated source checks
+
+`node --test tests/*.test.mjs`: **12 tests pass**. They cover version/type/session/expiry validation, malformed codes, incompatible builds, finite constrained inputs, guest authority rejection, countdown resets, premature fire, latched fire, both inputs before post-tick results, simultaneous-death draw, wins, empty-ammunition draw, pause readiness reset, equal eight-tick cooldowns, and the six-shot cap. ActionScript bridge functions are also exercised in a JavaScript VM with mocked Flash rendering/physics. Those source tests do not establish rendered-game compatibility by themselves.
+
+## Compiled SWF and browser checks
+
+The bridge gate was completed before networking: two Ruffle players initialized the archived arena and transferred a full nested render snapshot. The separate guest runs no simulation interval. Timeline actions and clip events are guarded in guest mode. Later full-game checks confirmed matching damage, ammunition, head transforms, death poses and round results without guest-side duplicate damage.
+
+The production-client integration runner uses two isolated browser documents and real WebRTC data channels. Test controls dispatch pointer events through the production input handlers; they do not inject health, ammunition, hits or damage into the game.
+
+Passed cases:
+
+- Manual complete-ICE offer/answer pairing and fresh session startup.
+- Guest fire before readiness consumes no ammunition.
+- Leaving a chamber resets the countdown; both-ready countdown reaches FIRE.
+- Guest shots control the right player and damage the left player through the host.
+- Host and guest health and final head transforms converge. Under latency, frames arrive later rather than at identical wall-clock instants; the settled-pose check uses a 0.1 stage-pixel tolerance.
+- One-sided rematch request does not restart the game; mutual acceptance creates fresh scenes.
+- Both players firing six misses produces an ammunition draw; additional fire is rejected.
+- Host departure ends the guest session.
+- The same gameplay/rematch/draw/departure sequence with **100 ms added delay in each direction and 20% random loss on the replaceable state channel**. Impairment was applied to channel sends in the test harness, not at the network interface. Reliable control messages were delayed but not deliberately dropped.
+
+An independent-browser duel also passed with **Chrome 155.0.8059.80** as guest and the in-app Chromium browser as host. The guest won, with matching final health, ammunition and head transforms.
+
+**Firefox 158.0 host ↔ Chrome 155.0.8059.80 guest** passed manual pairing, full duel, matching result/health/ammunition/poses, and a mutually accepted rematch. In that rematch, opening a new Firefox tab paused the host and guest. Returning the host kept health and ammunition intact and required both players to ready again. Screenshots are in `evidence/`.
+
+## Limits of this coverage
+
+- All tests used one physical machine and one physical network. No separate physical networks or mobile browsers were available for this run. Same-machine success does not establish NAT traversal across networks.
+- Real ICE-gathering timeouts occurred during retries and produced the retry error. Later fresh pairings succeeded. No TURN server is configured; networks requiring a relay remain unsupported.
+- Invalid/stale/incompatible codes and simultaneous-death draw are covered by source tests. A deterministic simultaneous lethal hit was not forced in a rendered duel.
+- The host is trusted and has a latency advantage. The guest renders delayed authoritative snapshots; this release does not add prediction, rollback, lag compensation or host migration.
+- Original game assets, links and ad hooks remain in the SWF. Availability of externally hosted developer ads is outside this repository's control.
+
+## Reproduce
+
+Serve `docs/` locally and open `test-runner.html` for the production-client integration suite. `control-test.html` supports manual pairing between independent browsers with pointer-event test controls. `simulation-test.html` isolates the compiled SWF; `bridge-test.html` isolates bridge startup and snapshot transfer. Keep the host document visible while gameplay checks run.
+
+The final compiled SWF checksum is recorded in `docs/build.json`. Publication and live-site verification are recorded separately in `evidence/deployment.json` once deployment completes.
