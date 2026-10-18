@@ -32,7 +32,11 @@ async function startRound(number){
  if(role==='guest')peer.send('sceneReady',{round});
  else{call('mpSetPaused',!remoteSceneReady||document.hidden);if(remoteSceneReady)finishQuickMatch();} // Resume only after guest confirms the scene.
 }
-function updateDiagnostics(){if(role==='guest'&&peer?.opened)$('#connection-stats').textContent=connectionText(peer.metrics.read());}
+function updateDiagnostics(){
+ if(role!=='guest'||!peer?.opened)return;
+ $('#connection-stats').textContent=connectionText(peer.metrics.read());
+ $('#connection-mode').textContent=peer.references.received.size?'Optimized updates enabled.':peer.compact?'Waiting for optimized updates…':'The host is using an older client. Both players should reload and create a new room for optimized updates.';
+}
 async function connected(){
  const owner=peer;$('#matching').hidden=true;
  $('#pairing').hidden=true;$('#exchange').hidden=true;$('#game').hidden=false;$('#retry').hidden=true;document.body.dataset.screen='game';$('#game-feedback').append($('#feedback'));$('#left-you').hidden=role!=='host';$('#right-you').hidden=role!=='guest';
