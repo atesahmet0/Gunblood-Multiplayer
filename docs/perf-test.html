@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>Guest render profiling</title><style>body{font:14px system-ui}iframe{width:800px;height:900px}button{padding:12px}pre{white-space:pre-wrap}</style><h1>Guest render profiling</h1><button id="run">Measure 10 seconds of moving gameplay</button><button id="tree">Inspect snapshot tree</button><pre id="report">Ready</pre><iframe src="test-runner.html" title="Integration"></iframe><script>
+const el=(w,s)=>w.document.querySelector(s),api=(w,n,...args)=>el(w,'ruffle-player')?.ruffle().callExternalInterface(n,...args),info=w=>api(w,'mpInspect'),sleep=ms=>new Promise(r=>setTimeout(r,ms));const report=document.querySelector('#report');document.querySelector('#run').onclick=async()=>{try{
+ const w=document.querySelector('iframe').contentWindow;await w.init(false);const [host,guest]=w.testClients();let times=[];const player=el(guest,'ruffle-player'),original=player.ruffle.bind(player);
+ player.ruffle=()=>{const api=original();return {callExternalInterface(name,...args){const t=performance.now();const result=api.callExternalInterface(name,...args);if(name==='mpApply')times.push(performance.now()-t);return result;}};};
+ w.ready();await w.until(()=>info(host)?.state==='playing','FIRE');
+ const snap=api(host,'mpSnapshot');const count=t=>1+(t.c||[]).reduce((sum,c)=>sum+count(c),0);let nodes=count(snap.tree)+snap.barrels.reduce((s,t)=>s+count(t),0)+snap.bars.reduce((s,t)=>s+count(t),0)+count(snap.bigText);
+ const bytes=new TextEncoder().encode(JSON.stringify(snap));const packed=await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer();
+ times=[];const begin=performance.now();for(let i=0;i<100;i++){w.pointer(host,500+Math.sin(i/8)*100,100+Math.cos(i/8)*100);w.pointer(guest,200+Math.sin(i/8)*100,100+Math.cos(i/8)*100);await sleep(100);}
+ times.sort((a,b)=>a-b);report.textContent=JSON.stringify({nodes,jsonBytes:bytes.length,gzipBytes:packed.byteLength,applies:times.length,seconds:(performance.now()-begin)/1000,meanApplyMs:times.reduce((a,b)=>a+b,0)/times.length,p95ApplyMs:times[Math.floor(times.length*.95)],maxApplyMs:times.at(-1)},null,2);
+ }catch(e){report.textContent='FAIL '+e.message;}};
+</script>
+
+<script>document.querySelector('#tree').onclick=()=>{const w=document.querySelector('iframe').contentWindow,[host]=w.testClients(),snap=api(host,'mpSnapshot'),count=t=>1+t.c.reduce((s,c)=>s+count(c),0),brief=(t,depth=0)=>({n:t.n,f:t.f,v:t.v,nodes:count(t),c:depth<3?t.c.map(c=>brief(c,depth+1)):[]});report.textContent=JSON.stringify(brief(snap.tree),null,2);};</script>

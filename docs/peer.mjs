@@ -1,8 +1,12 @@
+import {LatestSnapshot,latestFrame} from './latest-snapshot.mjs';
 import {Lobby} from './lobby.mjs';
 import {BUILD,VERSION,sessionId,encodeCode,decodeCode,RELAY_ERROR} from './protocol.mjs';
 export class Peer {
  constructor(role,events={}){
-  this.role=role;this.events=events;this.session=role==='host'?sessionId():null;this.closed=false;this.opened=false;
+  this.role=role;this.events=events;
+  this.renderFrames=latestFrame(s=>{try{this.events.snapshot?.(s);}catch{this.fail('Could not render peer state. Retry the duel.');}});
+  this.snapshots=new LatestSnapshot(data=>this.decodeSnapshot(data),s=>this.renderFrames.push(s),()=>this.fail('Invalid peer data. The session has ended.'));
+  this.session=role==='host'?sessionId():null;this.closed=false;this.opened=false;
   this.pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]});
   this.pc.onconnectionstatechange=()=>{
    const s=this.pc.connectionState;
@@ -26,10 +30,7 @@ export class Peer {
  async receive(channel,data){
   if(channel==='state'&&typeof data!=='string'){
    if(this.role!=='guest'||data.byteLength>60000)return;
-   const stream=new Blob([data]).stream().pipeThrough(new DecompressionStream('gzip'));
-   const reader=stream.getReader();let parts=[],size=0;
-   while(true){const {value,done}=await reader.read();if(done)break;size+=value.length;if(size>2000000){await reader.cancel();throw Error('Snapshot too large');}parts.push(value);}
-   this.events.snapshot?.(JSON.parse(await new Blob(parts).text()));return;
+   this.snapshots.push(data);return;
   }
   if(typeof data!=='string'||data.length>2000)return;
   const m=JSON.parse(data);
@@ -37,6 +38,11 @@ export class Peer {
   if(m.type==='hello'){if(m.data.build!==BUILD||m.data.v!==VERSION)this.fail('Incompatible build. Reload both browsers.');return;}
   if(m.type==='bye'){this.fail('Peer left. The session has ended.');return;}
   this.events.message?.(m.type,m.data,channel);
+ }
+ async decodeSnapshot(data){
+  const reader=new Blob([data]).stream().pipeThrough(new DecompressionStream('gzip')).getReader();let parts=[],size=0;
+  while(true){const {value,done}=await reader.read();if(done)break;size+=value.length;if(size>2000000){await reader.cancel();throw Error('Snapshot too large');}parts.push(value);}
+  return JSON.parse(await new Blob(parts).text());
  }
  send(type,data={},channel='control'){
   const ch=this[channel];if(ch?.readyState!=='open'||ch.bufferedAmount>128000)return false;
@@ -68,5 +74,5 @@ export class Peer {
  async answer(text){const c=decodeCode(text,'offer');this.session=c.session;await this.pc.setRemoteDescription({type:'offer',sdp:c.sdp});await this.pc.setLocalDescription(await this.pc.createAnswer());await this.gather();this.waitConnect();return encodeCode('answer',this.session,this.pc.localDescription.sdp);}
  async accept(text){if(this.pc.signalingState!=='have-local-offer')throw Error('This offer is no longer active. Retry with fresh codes.');const c=decodeCode(text,'answer',this.session);await this.pc.setRemoteDescription({type:'answer',sdp:c.sdp});this.waitConnect();}
  fail(message){if(this.closed)return;this.close();this.events.error?.(message);}
- close(){if(this.closed)return;this.send('bye');this.closed=true;this.lobby?.close();clearTimeout(this.connectTimer);clearTimeout(this.disconnectTimer);this.control?.close();this.state?.close();this.pc.close();}
+ close(){if(this.closed)return;this.send('bye');this.closed=true;this.snapshots.close();this.renderFrames.close();this.lobby?.close();clearTimeout(this.connectTimer);clearTimeout(this.disconnectTimer);this.control?.close();this.state?.close();this.pc.close();}
 }

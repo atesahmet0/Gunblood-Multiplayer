@@ -1,14 +1,15 @@
+import {bridgeSnapshot} from './render-snapshot.mjs';
 import {QuickMatch,QUICK_SLOT} from './quick-match.mjs';
 import {createAnalytics,createRoundAnalytics} from './analytics.mjs';
 import {ANALYTICS_ACCOUNT} from './analytics-config.mjs';
 import {roomCode} from './lobby.mjs';
-import {Peer} from './peer.mjs';
+import {Peer} from './peer.mjs?render=2';
 import {BUILD,input} from './protocol.mjs';
 const $=s=>document.querySelector(s);
 const capture=createAnalytics({location,navigator,account:ANALYTICS_ACCOUNT});
 capture('$pageview');
 let trackRound=createRoundAnalytics(capture);
-let remoteSceneReady=false;
+let remoteSceneReady=false,renderedSnapshot=null;
 let quickMatch,searchClock,searchStarted=0;
 let peer,role,player,poll,seq=0,lastAim=-1,lastFire=-1,round=1,lastSnapshot=-1,lastState='',myRematch=false,theirRematch=false,ended=false,busy=false,starting=false,lastRemote=0,hostPaused=false,needLeave=false;
 let pointer={x:0,y:0,ready:false,fire:false};
@@ -17,11 +18,11 @@ function call(name,...args){return player?.ruffle().callExternalInterface(name,.
 function error(message){status(message,true);$('#retry').hidden=false;ended=true;$('#rematch').hidden=true;$('#leave').hidden=true;clearInterval(poll);call('mpSetPaused',true);player?.pause();}
 async function action(fn){try{await fn();}catch(e){status(e.message,true);$('#retry').hidden=false;}}
 async function loadPlayer(){
- const owner=peer,engine=RufflePlayer.newest().createPlayer();player=engine;$('#player').replaceChildren(engine);await engine.load({url:'gunblood-multiplayer.swf',allowScriptAccess:true});
+ const owner=peer,engine=RufflePlayer.newest().createPlayer();player=engine;$('#player').replaceChildren(engine);await engine.load({url:'gunblood-multiplayer.swf?render=2',allowScriptAccess:true});
  await new Promise((resolve,reject)=>{const start=Date.now();let prepared=false;const id=setInterval(()=>{if(owner!==peer||owner.closed){clearInterval(id);reject(Error('Pairing cancelled'));return;}const invoke=(name,...args)=>engine.ruffle().callExternalInterface(name,...args);const boot=invoke('mpPing');if(!prepared&&boot?.loaded===boot?.total&&boot?.build===BUILD){prepared=true;invoke('mpPrepare');}if(invoke('mpPing')?.build===BUILD&&invoke('mpPing')?.ready){clearInterval(id);resolve();}else if(Date.now()-start>20000){clearInterval(id);reject(Error('The game did not initialize. Reload and try again.'));}},100);});
 }
 async function startRound(number){
- const owner=peer;starting=true;round=number;if(number>1)remoteSceneReady=false;lastSnapshot=-1;lastAim=-1;lastFire=-1;myRematch=false;theirRematch=false;$('#rematch').hidden=true;$('#rematch').disabled=false;
+ const owner=peer;starting=true;round=number;renderedSnapshot=null;if(number>1)remoteSceneReady=false;lastSnapshot=-1;lastAim=-1;lastFire=-1;myRematch=false;theirRematch=false;$('#rematch').hidden=true;$('#rematch').disabled=false;
  pointer.ready=false;pointer.fire=false;needLeave=true;if(number>1){player.pause();await loadPlayer();}if(owner!==peer||owner.closed)return;player.play();call('mpStart',role);
  await new Promise((resolve,reject)=>{let start=Date.now();let id=setInterval(()=>{if(owner!==peer||owner.closed){clearInterval(id);reject(Error('Pairing cancelled'));return;}if(call('mpInspect')?.role===role){clearInterval(id);resolve();}else if(Date.now()-start>10000){clearInterval(id);reject(Error('The arena did not initialize. Retry pairing.'));}},30);});
  if(owner!==peer||owner.closed)return;
@@ -35,7 +36,7 @@ async function connected(){
  $('#pairing').hidden=true;$('#exchange').hidden=true;$('#game').hidden=false;$('#retry').hidden=true;document.body.dataset.screen='game';$('#game-feedback').append($('#feedback'));$('#left-you').hidden=role!=='host';$('#right-you').hidden=role!=='guest';
  $('#side').textContent=role==='host'?'You are LEFT · Host':'You are RIGHT · Guest';
  status('Connected. Initializing both arenas…');
- try{await loadPlayer();if(ended||owner!==peer||owner.closed)return;await startRound(1);if(ended||owner!==peer||owner.closed)return;poll=setInterval(tick,80);}catch(e){if(owner===peer&&!owner.closed){if(quickMatch?.state==='pairing')recoverQuickMatch(e.message);else{error(e.message);owner.close();}}}
+ try{await loadPlayer();if(ended||owner!==peer||owner.closed)return;await startRound(1);if(ended||owner!==peer||owner.closed)return;poll=setInterval(tick,40);}catch(e){if(owner===peer&&!owner.closed){if(quickMatch?.state==='pairing')recoverQuickMatch(e.message);else{error(e.message);owner.close();}}}
 }
 function setPeer(r){
  role=r;ended=false;remoteSceneReady=false;round=1;starting=true;seq=0;trackRound=createRoundAnalytics(capture);
@@ -76,7 +77,8 @@ function showState(s){
 function onSnapshot(s){
  if(ended||starting||role!=='guest'||s.round!==round||s.version!==1||!Number.isSafeInteger(s.tick)||s.tick<=lastSnapshot)return;
  if(!Array.isArray(s.health)||!Array.isArray(s.ammo)||!s.tree)return;
- lastSnapshot=s.tick;call('mpApply',s);showState(s);finishQuickMatch();
+ if(call('mpApply',bridgeSnapshot(s,renderedSnapshot))!==true)return;
+ renderedSnapshot=s;lastSnapshot=s.tick;showState(s);finishQuickMatch();
 }
 async function tick(){
  if(ended||starting||busy)return;busy=true;

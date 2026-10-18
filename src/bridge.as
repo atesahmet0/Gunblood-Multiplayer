@@ -112,7 +112,9 @@ function mpTree(mc,depth) {
    if(depth > 8) { return r; }
    for(var k in mc) {
       var v = mc[k];
-      if(typeof(v) == "movieclip" && v._parent == mc) { r.c.push(mpTree(v,depth+1)); }
+      // Particle pools contain many inactive clips. Visible effects remain
+      // complete snapshots; absent dynamic clips are removed by mpApplyTree.
+      if(typeof(v) == "movieclip" && v._parent == mc && (v._visible || mpLink(v._name) == "")) { r.c.push(mpTree(v,depth+1)); }
    }
    return r;
 }
@@ -133,37 +135,76 @@ function mpLink(name) {
    if(name.indexOf("cp") == 0) { return "bchunks"; }
    return "";
 }
-function mpApplyTree(mc,t) {
+function mpApplyTree(mc,t,force) {
    if(!mc || !t) { return; }
-   mc.gotoAndStop(t.f);
-   mc._x=t.x; mc._y=t.y; mc._xscale=t.sx; mc._yscale=t.sy;
-   mc._rotation=t.r; mc._alpha=t.a; mc._visible=t.v;
-   var seen = new Object();
+   if(t == mc.__mpRender && !force && mc._currentframe == t.f) { return; }
+   var last = force ? null : mc.__mpRender;
+   var timelineChanged = mc._currentframe != t.f;
+   if(!last) { mc.stop(); }
+   // Re-entering unchanged timeline frames rebuilds nested display objects in Ruffle.
+   if(timelineChanged) { mc.gotoAndStop(t.f); }
+   if(!last || last.x != t.x) { mc._x=t.x; }
+   if(!last || last.y != t.y) { mc._y=t.y; }
+   if(!last || last.sx != t.sx) { mc._xscale=t.sx; }
+   if(!last || last.sy != t.sy) { mc._yscale=t.sy; }
+   if(!last || last.r != t.r) { mc._rotation=t.r; }
+   if(!last || last.a != t.a) { mc._alpha=t.a; }
+   if(!last || last.v != t.v) { mc._visible=t.v; }
+   var changed = !last || last.f != t.f || last.c.length != t.c.length;
+   if(!changed) {
+      for(var j=0;j<t.c.length;j++) { if(last.c[j].n != t.c[j].n) { changed=true; break; } }
+   }
+   var seen;
+   if(changed) { seen = new Object(); }
    for(var i=0;i<t.c.length;i++) {
       var child = t.c[i];
-      seen[child.n] = true;
+      if(changed) { seen[child.n] = true; }
       var target = mc[child.n];
       if(typeof(target) != "movieclip") {
          var link = mpLink(child.n);
          if(link != "") { target = mc.attachMovie(link,child.n,child.d); }
       }
-      mpApplyTree(target,child);
+      // A parent frame can re-place children with their original transforms.
+      mpApplyTree(target,child,force || timelineChanged);
    }
-   for(var k in mc) {
-      var v = mc[k];
-      if(typeof(v) == "movieclip" && v._parent == mc && !seen[v._name]) {
-         if(mpLink(v._name) != "") { v.removeMovieClip(); }
+   if(changed) {
+      for(var k in mc) {
+         var v = mc[k];
+         if(typeof(v) == "movieclip" && v._parent == mc && !seen[v._name]) {
+            if(mpLink(v._name) != "") { v.removeMovieClip(); }
+         }
       }
    }
+   mc.__mpRender=t;
+}
+function mpMergeTree(previous,patch) {
+   if(patch == null) { return previous; }
+   for(var i=0;i<patch.c.length;i++) { patch.c[i]=mpMergeTree(previous ? previous.c[i] : null,patch.c[i]); }
+   return patch;
+}
+function mpHideLegacyOverlay() {
+   // DefineSprite 538 contains the archived CHEATS ON timeline (text 537).
+   _root[",\""]._visible=false;
+   _root[",\""].stop();
 }
 function mpApply(s) {
    if(_root.mpRole != "guest" || s.version != 1 || s.tick <= mpTickNumber) { return false; }
    mpTickNumber = s.tick;
+   if(s.delta == 1) {
+      s.tree=mpMergeTree(mpRenderTree,s.tree);
+      s.bigText=mpMergeTree(mpRenderText,s.bigText);
+      for(var j=0;j<2;j++) {
+         s.barrels[j]=mpMergeTree(mpRenderBarrels[j],s.barrels[j]);
+         s.bars[j]=mpMergeTree(mpRenderBars[j],s.bars[j]);
+      }
+   }
+   mpRenderTree=s.tree; mpRenderText=s.bigText; mpRenderBarrels=s.barrels; mpRenderBars=s.bars;
    mpApplyTree(_root.scaleclip,s.tree);
    mpApplyTree(_root.barrel1,s.barrels[0]); mpApplyTree(_root.barrel2,s.barrels[1]);
    mpApplyTree(_root["switch"],s.bars[0]); mpApplyTree(_root["extends"],s.bars[1]);
    mpApplyTree(_root.bigtext,s.bigText);
-   _root.bigtext.bigtextin.countdown = s.text;
+   if(_root.bigtext.bigtextin.countdown != s.text) { _root.bigtext.bigtextin.countdown = s.text; }
+   mpHideLegacyOverlay();
    mpState=s.state; mpResult=s.result;
    for(var a=0;a<s.sounds.length;a++) {
       var event=s.sounds[a];
@@ -177,6 +218,7 @@ function mpApply(s) {
 function mpHead(c) { var p={x:0,y:0}; c.head.localToGlobal(p); return p; }
 function mpInspect() {
    return {heads:new Array(mpHead(char),mpHead(char2)),role:_root.mpRole,state:mpState,tick:mpTickNumber,left:char.life,right:char2.life,
+      legacyOverlayVisible:_root[",\""]._visible,legacyOverlayFrame:_root[",\""]._currentframe,
       paused:mpPaused,ready:new Array(mpReady(0),mpReady(1)),inputs:mpInputs,leftX:char._x,rightX:char2._x,children:mpTree(char,0).c.length};
 }
 clearInterval(_root.mainint);
@@ -184,6 +226,7 @@ setmouse = 0;
 set("function",0);
 _parent._xscale=100; _parent._yscale=100;
 _root.pausebox._visible = false;
+mpHideLegacyOverlay();
 mpSounds = new Array();
 mpSoundSerial = 0;
 mpTickNumber = -1;

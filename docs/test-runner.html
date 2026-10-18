@@ -7,6 +7,7 @@ function assert(v,s){if(!v)throw Error(s);note('PASS '+s);}
 const el=(w,s)=>w.document.querySelector(s);const api=(w,n,...a)=>el(w,'ruffle-player')?.ruffle().callExternalInterface(n,...a);
 const info=w=>api(w,'mpInspect');
 function pointer(w,x,y,fire=false){let e=el(w,'#input'),r=e.getBoundingClientRect();let opts={bubbles:true,clientX:r.left+x*r.width/720,clientY:r.top+y*r.height/425,pointerId:1,pointerType:'mouse'};e.dispatchEvent(new w.PointerEvent('pointermove',opts));if(fire)e.dispatchEvent(new w.PointerEvent('pointerdown',opts));}
+function testClients(){return [H,G];}
 function ready(){pointer(H,350,200);pointer(G,350,200);pointer(H,85,385);pointer(G,635,385);}
 async function sync(){await until(()=>info(H)?.state===info(G)?.state&&info(H)?.left===info(G)?.left&&info(H)?.right===info(G)?.right,'matching state');}
 async function init(impaired,quick=false){
@@ -31,6 +32,7 @@ async function run(impaired,quick=false){
   pointer(G,90,145,true);await sleep(500);assert(api(H,'mpSnapshot').ammo[1]===6,'guest cannot shoot before readiness');
   ready();await until(()=>info(H)?.state==='countdown','countdown');pointer(G,350,200);await until(()=>info(H)?.state==='waiting','reset');assert(true,'leaving chamber resets countdown');
   ready();await until(()=>info(H)?.state==='playing','playing');note('PASS both-ready countdown reaches FIRE');
+  assert(info(G).legacyOverlayVisible===false,'legacy CHEATS ON label is hidden on guest');const labelFrame=info(G).legacyOverlayFrame;await sleep(200);assert(info(G).legacyOverlayFrame===labelFrame,'legacy label timeline stays stopped');
   for(let i=0;i<6&&info(H).state!=='finished';i++){let p=info(H).heads[0];pointer(G,p.x,p.y,true);await sleep(650);}
   await until(()=>info(H).state==='finished','right win',5000);await sync();assert(info(H).left<=0&&info(H).right===100,'guest controls only right character; host applies damage');
   assert(info(G).left===info(H).left&&info(G).right===100,'guest health equals host without duplicate damage');

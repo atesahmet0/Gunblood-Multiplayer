@@ -1,0 +1,10 @@
+{
+  "nodes": 350,
+  "jsonBytes": 43763,
+  "gzipBytes": 3922,
+  "applies": 260,
+  "seconds": 10.478099999964238,
+  "meanApplyMs": 2.686538460392218,
+  "p95ApplyMs": 7.900000035762787,
+  "maxApplyMs": 15.399999976158142
+}
