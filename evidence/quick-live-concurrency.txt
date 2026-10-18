@@ -1,0 +1,7 @@
+Running…
+PASS four clients pair; fifth remains searching
+PASS two hosts and two guests
+PASS host input reaches exactly one guest
+PASS departure does not end the other pair
+PASS fifth remains matchable after two prior pairs
+CONCURRENCY PASSED

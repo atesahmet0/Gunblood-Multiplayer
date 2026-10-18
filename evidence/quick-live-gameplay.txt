@@ -1,0 +1,16 @@
+Deployed source: 7dc124f16d5d8ac4480133da2a4d1743fd32a02e
+Normal production root URLs used public Quick Match. Two clicks paired host left and guest right. Both readied through countdown; guest won using actual pointer clicks. Five guest shots, final host health 0; rematch mutually accepted.
+Host rematch: Ready: left no · right no
+Left · You
+100 health
+6 / 6 shots
+Right
+100 health
+6 / 6 shots
+Guest rematch: Ready: left no · right no
+Left
+100 health
+6 / 6 shots
+Right · You
+100 health
+6 / 6 shots
