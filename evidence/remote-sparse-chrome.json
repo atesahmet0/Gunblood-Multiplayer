@@ -1,0 +1,9 @@
+{
+  "mode": "reference frames / slow upload",
+  "seconds": 10.572699999988078,
+  "applies": 119,
+  "updatesPerSecond": 11.255403066400653,
+  "meanApplyMs": 5.050420166564589,
+  "p95ApplyMs": 8.5,
+  "meanFrameBytes": 1002.6013071895425
+}

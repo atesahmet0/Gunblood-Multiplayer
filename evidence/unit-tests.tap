@@ -2,271 +2,361 @@ TAP version 13
 # Subtest: one host event per duel, pause/resume does not count again, rematches count separately
 ok 1 - one host event per duel, pause/resume does not count again, rematches count separately
   ---
-  duration_ms: 1.815
+  duration_ms: 1.631958
   type: 'test'
   ...
 # Subtest: local, test, other sites and privacy preferences do not load analytics
 ok 2 - local, test, other sites and privacy preferences do not load analytics
   ---
-  duration_ms: 0.322666
+  duration_ms: 0.288084
   type: 'test'
   ...
 # Subtest: blocked loader and failed analytics never throw or affect gameplay
 ok 3 - blocked loader and failed analytics never throw or affect gameplay
   ---
-  duration_ms: 0.869084
+  duration_ms: 0.317834
   type: 'test'
   ...
 # Subtest: queued events preserve exact game totals, rematches and safe page URL
 ok 4 - queued events preserve exact game totals, rematches and safe page URL
   ---
-  duration_ms: 2.573542
+  duration_ms: 4.17475
   type: 'test'
   ...
 # Subtest: bundled counter never sends raw query parameters
 ok 5 - bundled counter never sends raw query parameters
   ---
-  duration_ms: 6.924667
+  duration_ms: 8.461834
   type: 'test'
   ...
 # Subtest: guest cannot inject inputs or execute physics
 ok 6 - guest cannot inject inputs or execute physics
   ---
-  duration_ms: 2.645833
+  duration_ms: 2.405916
   type: 'test'
   ...
 # Subtest: waiting cannot fire; both readiness and full countdown required
 ok 7 - waiting cannot fire; both readiness and full countdown required
   ---
-  duration_ms: 1.639375
+  duration_ms: 2.243875
   type: 'test'
   ...
 # Subtest: fire is latched across later aim updates; bursts coalesce per tick
 ok 8 - fire is latched across later aim updates; bursts coalesce per tick
   ---
-  duration_ms: 0.812584
+  duration_ms: 2.66575
   type: 'test'
   ...
 # Subtest: both inputs run before damage resolution; simultaneous deaths draw
 ok 9 - both inputs run before damage resolution; simultaneous deaths draw
   ---
-  duration_ms: 1.022583
+  duration_ms: 1.737875
   type: 'test'
   ...
 # Subtest: wins and empty-ammo draw use host state
 ok 10 - wins and empty-ammo draw use host state
   ---
-  duration_ms: 1.433958
+  duration_ms: 1.417709
   type: 'test'
   ...
 # Subtest: host suspension freezes tick and resets both readiness flags
 ok 11 - host suspension freezes tick and resets both readiness flags
   ---
-  duration_ms: 0.676417
+  duration_ms: 0.525958
+  type: 'test'
+  ...
+# Subtest: queued snapshot is never followed by another stale snapshot
+ok 12 - queued snapshot is never followed by another stale snapshot
+  ---
+  duration_ms: 36.4835
+  type: 'test'
+  ...
+# Subtest: congestion arising during gzip also drops the completed snapshot
+ok 13 - congestion arising during gzip also drops the completed snapshot
+  ---
+  duration_ms: 1.103417
+  type: 'test'
+  ...
+# Subtest: replaceable aiming drops on congestion; reliable fire still sends
+ok 14 - replaceable aiming drops on congestion; reliable fire still sends
+  ---
+  duration_ms: 0.116625
+  type: 'test'
+  ...
+# Subtest: closure during compression cannot send an old frame
+ok 15 - closure during compression cannot send an old frame
+  ---
+  duration_ms: 1.28925
+  type: 'test'
+  ...
+# Subtest: connection measurements separate incoming updates from expensive drawing
+ok 16 - connection measurements separate incoming updates from expensive drawing
+  ---
+  duration_ms: 0.839083
+  type: 'test'
+  ...
+# Subtest: stalled connections lose old samples and are explicitly reported
+ok 17 - stalled connections lose old samples and are explicitly reported
+  ---
+  duration_ms: 0.230292
+  type: 'test'
+  ...
+# Subtest: new sessions do not pretend to have measured delay or drawing
+ok 18 - new sessions do not pretend to have measured delay or drawing
+  ---
+  duration_ms: 0.624333
   type: 'test'
   ...
 # Subtest: firePlayerShot enforces eight ticks and six shots
-ok 12 - firePlayerShot enforces eight ticks and six shots
+ok 19 - firePlayerShot enforces eight ticks and six shots
   ---
-  duration_ms: 5.335584
+  duration_ms: 3.71275
   type: 'test'
   ...
 # Subtest: Shoot2 enforces eight ticks and six shots
-ok 13 - Shoot2 enforces eight ticks and six shots
+ok 20 - Shoot2 enforces eight ticks and six shots
   ---
-  duration_ms: 1.205042
+  duration_ms: 2.614375
   type: 'test'
   ...
 # Subtest: slow decompression keeps only one pending packet and never runs in parallel
-ok 14 - slow decompression keeps only one pending packet and never runs in parallel
+ok 21 - slow decompression keeps only one pending packet and never runs in parallel
   ---
-  duration_ms: 6.151416
+  duration_ms: 7.855667
   type: 'test'
   ...
 # Subtest: closing cancels pending packets and cannot render an in-flight decode
-ok 15 - closing cancels pending packets and cannot render an in-flight decode
+ok 22 - closing cancels pending packets and cannot render an in-flight decode
   ---
-  duration_ms: 1.273125
+  duration_ms: 2.708833
   type: 'test'
   ...
 # Subtest: decoder errors are handled and close the receiver
-ok 16 - decoder errors are handled and close the receiver
+ok 23 - decoder errors are handled and close the receiver
   ---
-  duration_ms: 1.105
+  duration_ms: 0.950458
   type: 'test'
   ...
 # Subtest: rendering coalesces a burst to its newest tick and cancels after close
-ok 17 - rendering coalesces a burst to its newest tick and cancels after close
+ok 24 - rendering coalesces a burst to its newest tick and cancels after close
   ---
-  duration_ms: 0.305667
+  duration_ms: 0.234666
   type: 'test'
   ...
 # Subtest: six digits preserve leading zeros and reject malformed input
-ok 18 - six digits preserve leading zeros and reject malformed input
+ok 25 - six digits preserve leading zeros and reject malformed input
   ---
-  duration_ms: 6.200583
+  duration_ms: 10.107875
   type: 'test'
   ...
 # Subtest: reserved host IDs retry collisions and use STUN only
-ok 19 - reserved host IDs retry collisions and use STUN only
+ok 26 - reserved host IDs retry collisions and use STUN only
   ---
-  duration_ms: 0.359459
+  duration_ms: 1.491917
   type: 'test'
   ...
 # Subtest: one host admits only one compatible guest; answers bind to attempt
-ok 20 - one host admits only one compatible guest; answers bind to attempt
+ok 27 - one host admits only one compatible guest; answers bind to attempt
   ---
-  duration_ms: 4.489834
+  duration_ms: 5.156375
   type: 'test'
   ...
-# (node:48758) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (node:54329) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: stale handshake cannot accept an answer from another attempt
-ok 21 - stale handshake cannot accept an answer from another attempt
+ok 28 - stale handshake cannot accept an answer from another attempt
   ---
-  duration_ms: 1.358
+  duration_ms: 1.142583
   type: 'test'
   ...
 # Subtest: guest targets the exact six-digit room; missing host gives a clear failure
-ok 22 - guest targets the exact six-digit room; missing host gives a clear failure
+ok 29 - guest targets the exact six-digit room; missing host gives a clear failure
   ---
-  duration_ms: 0.26125
+  duration_ms: 0.717917
   type: 'test'
   ...
 # Subtest: room expiration and unavailable signaling end pairing, not an established game
-ok 23 - room expiration and unavailable signaling end pairing, not an established game
+ok 30 - room expiration and unavailable signaling end pairing, not an established game
   ---
-  duration_ms: 1.572208
+  duration_ms: 2.7555
   type: 'test'
   ...
 # Subtest: versioned offer and answer roundtrip
-ok 24 - versioned offer and answer roundtrip
+ok 31 - versioned offer and answer roundtrip
   ---
-  duration_ms: 3.822292
+  duration_ms: 2.401875
   type: 'test'
   ...
 # Subtest: reject malformed, wrong type, different session, stale and future codes
-ok 25 - reject malformed, wrong type, different session, stale and future codes
+ok 32 - reject malformed, wrong type, different session, stale and future codes
   ---
-  duration_ms: 0.68475
+  duration_ms: 0.8195
   type: 'test'
   ...
 # Subtest: guest messages allow finite inputs only, discard claimed damage and side
-ok 26 - guest messages allow finite inputs only, discard claimed damage and side
+ok 33 - guest messages allow finite inputs only, discard claimed damage and side
   ---
-  duration_ms: 0.518334
+  duration_ms: 1.643167
   type: 'test'
   ...
 # Subtest: winner resolved from both post-tick health values
-ok 27 - winner resolved from both post-tick health values
+ok 34 - winner resolved from both post-tick health values
   ---
-  duration_ms: 0.54075
+  duration_ms: 2.084125
   type: 'test'
   ...
 # Subtest: five simultaneous arrivals produce disjoint pairs and leave one free waiting slot
-ok 28 - five simultaneous arrivals produce disjoint pairs and leave one free waiting slot
+ok 35 - five simultaneous arrivals produce disjoint pairs and leave one free waiting slot
   ---
-  duration_ms: 1298.430667
+  duration_ms: 1447.974083
   type: 'test'
   ...
 # Subtest: cancelling registration or a waiting host releases all owned resources
-ok 29 - cancelling registration or a waiting host releases all owned resources
+ok 36 - cancelling registration or a waiting host releases all owned resources
   ---
-  duration_ms: 0.576792
+  duration_ms: 1.075208
   type: 'test'
   ...
 # Subtest: a disappearing waiting host is retried and cannot create a stale match
-ok 30 - a disappearing waiting host is retried and cannot create a stale match
+ok 37 - a disappearing waiting host is retried and cannot create a stale match
   ---
-  duration_ms: 21.492209
+  duration_ms: 21.9105
   type: 'test'
   ...
-# (node:48760) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# (node:54331) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: incompatible metadata is rejected without reserving the waiting slot
-ok 31 - incompatible metadata is rejected without reserving the waiting slot
+ok 38 - incompatible metadata is rejected without reserving the waiting slot
   ---
-  duration_ms: 0.643833
+  duration_ms: 1.27675
   type: 'test'
   ...
 # Subtest: search ends at two minutes even after handoff; completed games do not expire
-ok 32 - search ends at two minutes even after handoff; completed games do not expire
+ok 39 - search ends at two minutes even after handoff; completed games do not expire
   ---
-  duration_ms: 0.907625
+  duration_ms: 2.593333
   type: 'test'
   ...
 # Subtest: adopted signaling waits for guest readiness and retains validated offer/answer flow
-ok 33 - adopted signaling waits for guest readiness and retains validated offer/answer flow
+ok 40 - adopted signaling waits for guest readiness and retains validated offer/answer flow
   ---
-  duration_ms: 20.781334
+  duration_ms: 21.845667
   type: 'test'
   ...
 # Subtest: cancellation during reservation cannot commit a late acceptance
-ok 34 - cancellation during reservation cannot commit a late acceptance
+ok 41 - cancellation during reservation cannot commit a late acceptance
   ---
-  duration_ms: 21.755958
+  duration_ms: 22.674791
   type: 'test'
   ...
 # Subtest: stale reservation IDs cannot hand off; signaling errors stop with a retry message
-ok 35 - stale reservation IDs cannot hand off; signaling errors stop with a retry message
+ok 42 - stale reservation IDs cannot hand off; signaling errors stop with a retry message
   ---
-  duration_ms: 1.11925
+  duration_ms: 1.471083
   type: 'test'
   ...
 # Subtest: test rendezvous is isolated from the public matchmaking pool
-ok 36 - test rendezvous is isolated from the public matchmaking pool
+ok 43 - test rendezvous is isolated from the public matchmaking pool
   ---
-  duration_ms: 0.49025
+  duration_ms: 0.974166
   type: 'test'
   ...
 # Subtest: bridge patches reconstruct complete state after loss, reordered children, deaths and reset
-ok 37 - bridge patches reconstruct complete state after loss, reordered children, deaths and reset
+ok 44 - bridge patches reconstruct complete state after loss, reordered children, deaths and reset
   ---
-  duration_ms: 1.974542
+  duration_ms: 1.046542
   type: 'test'
   ...
 # Subtest: unchanged branches do not cross the Flash bridge; skipped network ticks need no baseline
-ok 38 - unchanged branches do not cross the Flash bridge; skipped network ticks need no baseline
+ok 45 - unchanged branches do not cross the Flash bridge; skipped network ticks need no baseline
   ---
-  duration_ms: 0.340333
+  duration_ms: 0.184625
   type: 'test'
   ...
 # Subtest: inactive particles are omitted, visible effects and hidden static clips retained
-ok 39 - inactive particles are omitted, visible effects and hidden static clips retained
+ok 46 - inactive particles are omitted, visible effects and hidden static clips retained
   ---
-  duration_ms: 1.375875
+  duration_ms: 1.334042
   type: 'test'
   ...
 # Subtest: identical snapshots do not re-enter frames or write unchanged transforms
-ok 40 - identical snapshots do not re-enter frames or write unchanged transforms
+ok 47 - identical snapshots do not re-enter frames or write unchanged transforms
   ---
-  duration_ms: 0.748125
+  duration_ms: 0.484292
   type: 'test'
   ...
 # Subtest: parent frame changes restore child transforms even with unchanged child snapshots
-ok 41 - parent frame changes restore child transforms even with unchanged child snapshots
+ok 48 - parent frame changes restore child transforms even with unchanged child snapshots
   ---
-  duration_ms: 0.66
+  duration_ms: 0.326625
   type: 'test'
   ...
 # Subtest: expired effects are removed and later visible effects reattach at authoritative depth
-ok 42 - expired effects are removed and later visible effects reattach at authoritative depth
+ok 49 - expired effects are removed and later visible effects reattach at authoritative depth
   ---
-  duration_ms: 0.688375
+  duration_ms: 0.263208
   type: 'test'
   ...
 # Subtest: legacy cheat label is hidden and stopped without altering other overlays
-ok 43 - legacy cheat label is hidden and stopped without altering other overlays
+ok 50 - legacy cheat label is hidden and stopped without altering other overlays
   ---
-  duration_ms: 0.552958
+  duration_ms: 0.276417
   type: 'test'
   ...
-1..43
-# tests 43
+# Subtest: unacknowledged clients keep receiving independent full snapshots
+ok 51 - unacknowledged clients keep receiving independent full snapshots
+  ---
+  duration_ms: 0.480792
+  type: 'test'
+  ...
+# Subtest: any reference update reconstructs full state after arbitrary packet loss
+ok 52 - any reference update reconstructs full state after arbitrary packet loss
+  ---
+  duration_ms: 1.865792
+  type: 'test'
+  ...
+# Subtest: loss of reference acknowledgment cannot activate a new baseline
+ok 53 - loss of reference acknowledgment cannot activate a new baseline
+  ---
+  duration_ms: 0.308375
+  type: 'test'
+  ...
+# Subtest: reordered/expired references cannot roll back active state or grow memory
+ok 54 - reordered/expired references cannot roll back active state or grow memory
+  ---
+  duration_ms: 0.357708
+  type: 'test'
+  ...
+# Subtest: rematches use full state until a matching round reference is acknowledged
+ok 55 - rematches use full state until a matching round reference is acknowledged
+  ---
+  duration_ms: 0.100875
+  type: 'test'
+  ...
+# Subtest: reference gzip is lossless including effects and fractional transforms
+ok 56 - reference gzip is lossless including effects and fractional transforms
+  ---
+  duration_ms: 14.623458
+  type: 'test'
+  ...
+# Subtest: transport negotiates capability, sends the reference reliably, then compact state after ACK
+ok 57 - transport negotiates capability, sends the reference reliably, then compact state after ACK
+  ---
+  duration_ms: 4.807625
+  type: 'test'
+  ...
+# Subtest: adding blood or reordering clips does not retransmit unchanged characters
+ok 58 - adding blood or reordering clips does not retransmit unchanged characters
+  ---
+  duration_ms: 0.243042
+  type: 'test'
+  ...
+1..58
+# tests 58
 # suites 0
-# pass 43
+# pass 58
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1471.245083
+# duration_ms 1634.86975

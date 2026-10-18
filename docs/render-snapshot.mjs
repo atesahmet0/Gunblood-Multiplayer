@@ -1,8 +1,9 @@
-// The wire always carries complete snapshots. Only the local Flash bridge uses
-// patches, computed against the last successfully applied state (never packets
-// that were dropped or replaced while decoding).
+// Local Flash patches reference the last successfully applied state. The wire
+// codec separately uses an acknowledged reference frame, so dropped network
+// packets never become a dependency of later updates.
 const props=['n','d','f','x','y','sx','sy','r','a','v'];
 export function treePatch(next,previous){
+ if(next===previous)return null;
  if(!previous)return next;
  if(next.c.length!==previous.c.length||next.c.some((c,i)=>c.n!==previous.c[i].n))return next;
  const children=next.c.map((c,i)=>treePatch(c,previous.c[i]));

@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {Peer} from '../docs/peer.mjs';
+function peer(){const p=Object.create(Peer.prototype);p.closed=false;p.session='test';p.sent=[];p.state={readyState:'open',bufferedAmount:0,send:v=>p.sent.push(v)};return p;}
+test('queued snapshot is never followed by another stale snapshot',async()=>{const p=peer();p.state.bufferedAmount=1;await p.snapshot({tick:1});assert.equal(p.sent.length,0);p.state.bufferedAmount=0;await p.snapshot({tick:9});assert.equal(p.sent.length,1);const json=await new Response(new Blob(p.sent).stream().pipeThrough(new DecompressionStream('gzip'))).json();assert.equal(json.tick,9);});
+test('congestion arising during gzip also drops the completed snapshot',async()=>{const p=peer();const pending=p.snapshot({tick:1,tree:'frame'.repeat(10000)});p.state.bufferedAmount=10;await pending;assert.equal(p.sent.length,0);assert.equal(p.packing,false);});
+test('replaceable aiming drops on congestion; reliable fire still sends',()=>{const p=peer();p.state.bufferedAmount=10;p.control={readyState:'open',bufferedAmount:10,send:v=>p.sent.push(v)};assert.equal(p.send('input',{seq:1},'state'),false);assert.equal(p.send('input',{seq:2,fire:true}),true);assert.equal(p.sent.length,1);});
+test('closure during compression cannot send an old frame',async()=>{const p=peer();const pending=p.snapshot({tick:1});p.closed=true;await pending;assert.equal(p.sent.length,0);});

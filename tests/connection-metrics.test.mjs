@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {ConnectionMetrics,connectionText} from '../docs/connection-metrics.mjs';
+test('connection measurements separate incoming updates from expensive drawing',()=>{const m=new ConnectionMetrics(0);for(let i=1;i<=25;i++)m.receive(4000,i*40);m.render(4,900);m.render(8,950);m.rtt=120;const s=m.read(1000);assert.equal(s.incomingHz,25);assert.equal(s.appliedHz,2);assert.equal(s.kbps,800);assert.equal(s.renderMs,6);assert.equal(s.ageMs,0);assert.match(connectionText(s),/120 ms.*25.0\/s.*6.0 ms/);});
+test('stalled connections lose old samples and are explicitly reported',()=>{const m=new ConnectionMetrics(0);m.receive(1000,100);m.render(9,100);assert.match(connectionText(m.read(2201)),/stalled/);const s=m.read(6000);assert.equal(s.incomingHz,0);assert.equal(s.renderMs,null);assert.equal(s.ageMs,5900);});
+test('new sessions do not pretend to have measured delay or drawing',()=>{const m=new ConnectionMetrics(10),s=m.read(10);assert.equal(s.ageMs,null);assert.equal(s.rttMs,null);assert.match(connectionText(s),/measuring/);assert.doesNotMatch(connectionText(s),/stalled|NaN|Infinity/);});

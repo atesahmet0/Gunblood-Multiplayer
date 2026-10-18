@@ -1,0 +1,9 @@
+{
+  "mode": "full fallback",
+  "seconds": 10.51480000001192,
+  "applies": 53,
+  "updatesPerSecond": 5.040514322663285,
+  "meanApplyMs": 7.484905657903203,
+  "p95ApplyMs": 8.399999976158142,
+  "meanFrameBytes": 4166.092307692307
+}

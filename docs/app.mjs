@@ -1,21 +1,22 @@
-import {bridgeSnapshot} from './render-snapshot.mjs';
+import {connectionText} from './connection-metrics.mjs';
+import {bridgeSnapshot} from './render-snapshot.mjs?network=3';
 import {QuickMatch,QUICK_SLOT} from './quick-match.mjs';
 import {createAnalytics,createRoundAnalytics} from './analytics.mjs';
 import {ANALYTICS_ACCOUNT} from './analytics-config.mjs';
 import {roomCode} from './lobby.mjs';
-import {Peer} from './peer.mjs?render=2';
+import {Peer} from './peer.mjs?render=3';
 import {BUILD,input} from './protocol.mjs';
 const $=s=>document.querySelector(s);
 const capture=createAnalytics({location,navigator,account:ANALYTICS_ACCOUNT});
 capture('$pageview');
 let trackRound=createRoundAnalytics(capture);
 let remoteSceneReady=false,renderedSnapshot=null;
-let quickMatch,searchClock,searchStarted=0;
+let quickMatch,searchClock,searchStarted=0,diagnosticsClock;
 let peer,role,player,poll,seq=0,lastAim=-1,lastFire=-1,round=1,lastSnapshot=-1,lastState='',myRematch=false,theirRematch=false,ended=false,busy=false,starting=false,lastRemote=0,hostPaused=false,needLeave=false;
 let pointer={x:0,y:0,ready:false,fire:false};
 function status(text,error=false){$('#feedback').hidden=!text;$('#status').textContent=text;$('#status').classList.toggle('error',error);}
 function call(name,...args){return player?.ruffle().callExternalInterface(name,...args);}
-function error(message){status(message,true);$('#retry').hidden=false;ended=true;$('#rematch').hidden=true;$('#leave').hidden=true;clearInterval(poll);call('mpSetPaused',true);player?.pause();}
+function error(message){clearInterval(diagnosticsClock);status(message,true);$('#retry').hidden=false;ended=true;$('#rematch').hidden=true;$('#leave').hidden=true;clearInterval(poll);call('mpSetPaused',true);player?.pause();}
 async function action(fn){try{await fn();}catch(e){status(e.message,true);$('#retry').hidden=false;}}
 async function loadPlayer(){
  const owner=peer,engine=RufflePlayer.newest().createPlayer();player=engine;$('#player').replaceChildren(engine);await engine.load({url:'gunblood-multiplayer.swf?render=2',allowScriptAccess:true});
@@ -31,9 +32,11 @@ async function startRound(number){
  if(role==='guest')peer.send('sceneReady',{round});
  else{call('mpSetPaused',!remoteSceneReady||document.hidden);if(remoteSceneReady)finishQuickMatch();} // Resume only after guest confirms the scene.
 }
+function updateDiagnostics(){if(role==='guest'&&peer?.opened)$('#connection-stats').textContent=connectionText(peer.metrics.read());}
 async function connected(){
  const owner=peer;$('#matching').hidden=true;
  $('#pairing').hidden=true;$('#exchange').hidden=true;$('#game').hidden=false;$('#retry').hidden=true;document.body.dataset.screen='game';$('#game-feedback').append($('#feedback'));$('#left-you').hidden=role!=='host';$('#right-you').hidden=role!=='guest';
+ $('#network-details').hidden=role!=='guest';clearInterval(diagnosticsClock);diagnosticsClock=setInterval(updateDiagnostics,1000);
  $('#side').textContent=role==='host'?'You are LEFT · Host':'You are RIGHT · Guest';
  status('Connected. Initializing both arenas…');
  try{await loadPlayer();if(ended||owner!==peer||owner.closed)return;await startRound(1);if(ended||owner!==peer||owner.closed)return;poll=setInterval(tick,40);}catch(e){if(owner===peer&&!owner.closed){if(quickMatch?.state==='pairing')recoverQuickMatch(e.message);else{error(e.message);owner.close();}}}
@@ -77,7 +80,9 @@ function showState(s){
 function onSnapshot(s){
  if(ended||starting||role!=='guest'||s.round!==round||s.version!==1||!Number.isSafeInteger(s.tick)||s.tick<=lastSnapshot)return;
  if(!Array.isArray(s.health)||!Array.isArray(s.ammo)||!s.tree)return;
+ const begin=performance.now();
  if(call('mpApply',bridgeSnapshot(s,renderedSnapshot))!==true)return;
+ peer.metrics.render(performance.now()-begin);
  renderedSnapshot=s;lastSnapshot=s.tick;showState(s);finishQuickMatch();
 }
 async function tick(){
@@ -152,7 +157,7 @@ document.addEventListener('visibilitychange',()=>{
   peer.send('pause',{paused:document.hidden,round});$('#suspend').hidden=false;
  }else if(role==='guest'&&peer?.opened){pointer.ready=false;peer.send('input',{...pointer,seq:seq++,round},'state');}
 });
-window.addEventListener('pagehide',()=>{quickMatch?.cancel();peer?.close();});
+window.addEventListener('pagehide',()=>{clearInterval(diagnosticsClock);quickMatch?.cancel();peer?.close();});
 window.addEventListener('unhandledrejection',e=>error(e.reason?.message||'Unexpected error. Retry to start again.'));
 
 const fullscreenButton=$('#fullscreen');
@@ -178,7 +183,7 @@ function restoreMatching(){
  $('.pair-panel').append($('#feedback'));document.body.dataset.screen='quick';
 }
 function finishQuickMatch(){if(quickMatch?.state==='pairing'){quickMatch.complete();clearInterval(searchClock);}}
-function detachQuickPeer(){const old=peer;peer=null;old?.close();player?.pause();clearInterval(poll);starting=false;busy=false;}
+function detachQuickPeer(){clearInterval(diagnosticsClock);const old=peer;peer=null;old?.close();player?.pause();clearInterval(poll);starting=false;busy=false;}
 function recoverQuickMatch(message){detachQuickPeer();restoreMatching();quickMatch.resume('Pairing did not finish. Finding another opponent… Some networks require a relay, which this game does not use.');}
 function showMatchFailure(message){
  detachQuickPeer();restoreMatching();clearInterval(searchClock);ended=true;$('#matching-title').textContent='Search stopped';$('#matching-description').textContent='You can try again or return to the lobby.';$('#cancel-match').textContent='Back';status(message,true);$('#retry').hidden=false;

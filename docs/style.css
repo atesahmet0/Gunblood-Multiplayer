@@ -103,3 +103,5 @@ footer{flex:1;min-width:0;text-align:center;display:flex;flex-direction:column;g
 #matching{max-width:660px;margin-inline:auto;text-align:center;padding:12px 0}#matching .panel-description{margin-inline:auto}#matching-title:focus{outline:none}.search-time{margin:16px auto;color:var(--muted);font-variant-numeric:tabular-nums}#cancel-match{min-width:170px}
 @media(max-width:760px){#choice-screen{grid-template-columns:1fr 1fr;gap:16px}.quick-choice{grid-column:1/-1;max-width:360px;width:100%;justify-self:center}}
 @media(max-width:480px){#choice-screen{gap:14px}.quick-choice{max-width:none}}
+
+.network-details{width:80%;margin:0 auto 12px;color:var(--muted);font-size:14px}.network-details summary{cursor:pointer;min-height:32px;display:list-item}.network-details p{margin:6px 0}.game:fullscreen .network-details{display:none}@media(max-width:760px){.network-details{width:86%}}
