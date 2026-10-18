@@ -206,3 +206,5 @@ The one authored entrance is the exchange apron's (180ms) clip-path reveal, ease
 - **Don't** describe the failed automated mockup comparison as passed or this extraction as accessibility certification.
 
 Fullscreen gameplay uses the native Fullscreen API on the duel section. Keep round status, health, ammunition and exit controls visible; fit the arena at 720:425 using the available container dimensions. Decorative bezel and page-level content recede in this mode.
+
+Quick Match is the oxblood primary lobby action; Host Game and Join Game use the dark secondary plate. The centered introduction spans the action row. On narrow screens, Quick Match spans both columns above Host/Join. The search screen keeps the arena screenshot anchored and shows a quiet elapsed timer, status and Cancel; failure presents Try again and Back.

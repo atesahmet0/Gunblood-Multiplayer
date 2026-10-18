@@ -98,3 +98,8 @@ footer{flex:1;min-width:0;text-align:center;display:flex;flex-direction:column;g
 .game:fullscreen .scoreboard{padding:8px 0;border:0;gap:24px}.game:fullscreen .fighter-side{margin:0}.game:fullscreen .fighter-values strong{font-size:22px}.game:fullscreen progress{margin-top:4px}
 .game:fullscreen .suspend{margin-block:4px;font-size:14px}
 @media(max-width:480px){.match-actions{gap:0}.match-actions .text-button{font-size:14px;padding-inline:8px}.game:fullscreen{padding:4px 8px}}
+
+#choice-screen{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}.choice-intro{grid-column:1/-1;text-align:center}.choice-intro .panel-description{margin-inline:auto}
+#matching{max-width:660px;margin-inline:auto;text-align:center;padding:12px 0}#matching .panel-description{margin-inline:auto}#matching-title:focus{outline:none}.search-time{margin:16px auto;color:var(--muted);font-variant-numeric:tabular-nums}#cancel-match{min-width:170px}
+@media(max-width:760px){#choice-screen{grid-template-columns:1fr 1fr;gap:16px}.quick-choice{grid-column:1/-1;max-width:360px;width:100%;justify-self:center}}
+@media(max-width:480px){#choice-screen{gap:14px}.quick-choice{max-width:none}}

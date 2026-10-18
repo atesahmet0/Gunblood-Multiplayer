@@ -61,6 +61,7 @@ export class Peer {
   });
  }
  waitConnect(){clearTimeout(this.connectTimer);this.connectTimer=setTimeout(()=>this.fail(RELAY_ERROR),45000);}
+ adoptQuickMatch(pair){this.lobby=new Lobby(this,this.events);this.lobby.adopt(pair);}
  async host(){this.lobby=new Lobby(this,this.events);await this.lobby.start();}
  async join(code){this.lobby=new Lobby(this,this.events);await this.lobby.start(code);}
  async offer(){await this.pc.setLocalDescription(await this.pc.createOffer());await this.gather();return encodeCode('offer',this.session,this.pc.localDescription.sdp);}

@@ -48,3 +48,13 @@ The host runs physics, randomness, collisions, damage and the post-tick winner d
 `docs/build.json` records the compiled SWF checksum. The browser checks and their precise coverage are documented in [VERIFICATION.md](VERIFICATION.md). Developer harnesses are `bridge-test.html`, `simulation-test.html`, `control-test.html` and `test-runner.html`.
 
 See [NOTICE.md](NOTICE.md) for ownership, provenance and hosting terms. No open-source license grant for the original game is asserted.
+
+## Quick Match
+
+Choose **Quick Match** to find another waiting player without sharing a code. Keep the tab visible; Cancel returns to the lobby, and a two-minute search limit offers retry. The current waiting-slot owner hosts and plays left. Host Game and Join Game still support private six-digit pairing.
+
+Matchmaking uses a build-versioned waiting ID on the existing free public PeerJS service. A pair reserves each other, acknowledges the reservation and releases that ID with `disconnect()` while its existing signaling channel stays alive; later pairs can form independently. The game then uses the original native WebRTC control/state channels. No additional account, persistent queue server or TURN relay is added.
+
+This is best-effort casual matchmaking. It provides no accounts, ranking, strict FIFO, fairness guarantees or protection against someone occupying the public slot. Directly connecting peers run the same trusted-host game model as code pairing. Some networks require a relay and cannot connect.
+
+Use `quick-test.html` for simultaneous-client and cancellation checks, or the Quick Match option in `test-runner.html` for the full gameplay suite. Test URLs suppress analytics and use a separate PeerJS rendezvous slot, so verification clients do not enter the public Quick Match pool.

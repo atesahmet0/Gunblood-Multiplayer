@@ -1,0 +1,34 @@
+<!doctype html><meta charset="utf-8"><title>Quick Match concurrency checks</title>
+<style>body{font:15px system-ui;background:#eee;color:#222}button{padding:12px}pre{white-space:pre-wrap}#frames{display:flex;flex-wrap:wrap;gap:8px}iframe{width:390px;height:500px;border:1px solid #777}</style>
+<h1>Quick Match concurrency checks</h1><p>Five isolated documents; real public PeerJS signaling and WebRTC. All child documents use test URLs and send no analytics.</p>
+<button id="run">Test five simultaneous players</button><button id="cancel">Test cancellation</button><button id="hidden">Test hidden-tab cancellation</button><button id="inspect">Inspect</button><pre id="report">Ready</pre><div id="frames"></div>
+<script>
+let clients=[];const report=document.querySelector('#report');const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const el=(w,s)=>w.document.querySelector(s),api=(w,n,...a)=>el(w,'ruffle-player')?.ruffle().callExternalInterface(n,...a),info=w=>api(w,'mpInspect');
+const note=s=>report.textContent+='\n'+s;
+async function until(fn,label,ms=90000){const end=Date.now()+ms;while(Date.now()<end){if(fn())return;await sleep(150);}throw Error(label);}
+function assert(ok,label){if(!ok)throw Error(label);note('PASS '+label);}
+async function setup(count){document.querySelector('#frames').replaceChildren();clients=[];for(let i=0;i<count;i++){const f=document.createElement('iframe');f.src='./?test=quick-'+Date.now()+'-'+i;f.title='Player '+(i+1);document.querySelector('#frames').append(f);await new Promise(r=>f.onload=r);clients.push(f.contentWindow);}}
+function pointer(w,x,y){const e=el(w,'#input'),b=e.getBoundingClientRect();e.dispatchEvent(new w.PointerEvent('pointermove',{bubbles:true,clientX:b.left+x*b.width/720,clientY:b.top+y*b.height/425}));}
+async function run(){report.textContent='Running…';try{
+ await setup(5);clients.forEach(w=>el(w,'#quick-match').click());
+ await until(()=>clients.filter(w=>info(w)?.role).length===4,'four initialized clients');await sleep(700);
+ const paired=clients.filter(w=>info(w)?.role),waiting=clients.filter(w=>!info(w)?.role);
+ assert(paired.length===4&&waiting.length===1,'four clients pair; fifth remains searching');
+ assert(paired.filter(w=>info(w).role==='host').length===2&&paired.filter(w=>info(w).role==='guest').length===2,'two hosts and two guests');
+ const host=paired.find(w=>info(w).role==='host');for(const w of paired)pointer(w,350,200);pointer(host,85,385);
+ await until(()=>paired.filter(w=>/Ready: left yes/.test(el(w,'#round').textContent)).length===2,'host readiness reaches one guest',5000);
+ const first=paired.filter(w=>/Ready: left yes/.test(el(w,'#round').textContent));assert(first.length===2&&first.includes(host),'host input reaches exactly one guest');
+ el(host,'#leave').click();await until(()=>first.filter(w=>/left|disconnected/.test(el(w,'#status').textContent)).length===2,'first pair departure');
+ assert(paired.filter(w=>!first.includes(w)).every(w=>!el(w,'#leave').hidden),'departure does not end the other pair');
+ const sixth=document.createElement('iframe');sixth.title='Player 6';sixth.src='./?test=quick-sixth-'+Date.now();document.querySelector('#frames').append(sixth);await new Promise(r=>sixth.onload=r);clients.push(sixth.contentWindow);el(sixth.contentWindow,'#quick-match').click();
+ await until(()=>info(waiting[0])?.role&&info(sixth.contentWindow)?.role,'fifth pairs with sixth');assert(true,'fifth remains matchable after two prior pairs');note('CONCURRENCY PASSED');
+ }catch(e){note('FAIL '+e.message);inspect();}}
+function inspect(){clients.forEach((w,i)=>note('Player '+(i+1)+' '+JSON.stringify(info(w))+' | '+el(w,'#status')?.textContent));}
+document.querySelector('#run').onclick=run;document.querySelector('#inspect').onclick=inspect;
+document.querySelector('#cancel').onclick=async()=>{report.textContent='Running cancellation…';try{await setup(2);const first=clients[0];el(first,'#quick-match').click();await until(()=>/Finding/.test(el(first,'#matching-title').textContent),'search');el(first,'#cancel-match').click();await until(()=>!el(first,'#choice-screen').hidden,'back in lobby',10000);el(clients[1],'#quick-match').click();el(first,'#quick-match').click();await until(()=>clients.every(w=>info(w)?.role),'pair after cancelled slot');assert(true,'cancelled waiting slot can be reused');note('CANCELLATION PASSED');}catch(e){note('FAIL '+e.message);inspect();}};
+</script>
+
+<script>
+document.querySelector('#hidden').onclick=async()=>{report.textContent='Testing synthetic visibility event…';try{await setup(1);const w=clients[0];el(w,'#quick-match').click();await until(()=>/Finding/.test(el(w,'#matching-title').textContent),'search');Object.defineProperty(w.document,'hidden',{configurable:true,value:true});w.document.dispatchEvent(new w.Event('visibilitychange'));delete w.document.hidden;await until(()=>/tab was hidden/.test(el(w,'#status').textContent),'hidden cancellation',3000);assert(!el(w,'#retry').hidden&&el(w,'#cancel-match').textContent==='Back','hidden search stops and requires explicit retry');note('VISIBILITY HANDLER PASSED (synthetic event)');}catch(e){note('FAIL '+e.message);}};
+</script>

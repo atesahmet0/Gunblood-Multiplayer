@@ -24,8 +24,15 @@
    <div class="pair-panel">
     <div id="choice-screen">
      <div class="choice-intro"><h2>Start a duel</h2><p class="panel-description">Host plays left. Guest plays right.</p></div>
-     <div class="choice-action"><button id="host">Host Game</button><p class="action-hint">Create a six-digit code for your friend.</p></div>
+     <div class="choice-action quick-choice"><button id="quick-match">Quick Match</button><p class="action-hint">Find another player online.</p></div>
+     <div class="choice-action"><button id="host" class="secondary">Host Game</button><p class="action-hint">Create a six-digit code for your friend.</p></div>
      <div class="choice-action"><button id="join" class="secondary">Join Game</button><p class="action-hint">Already have a code? Enter it here.</p></div>
+    </div>
+    <div id="matching" hidden>
+     <h2 id="matching-title" tabindex="-1">Finding an opponent…</h2>
+     <p id="matching-description" class="panel-description">Waiting for another player. Keep this tab visible.</p>
+     <p class="search-time">Searching <span id="search-elapsed">0:00</span></p>
+     <button id="cancel-match" class="secondary">Cancel</button>
     </div>
     <div id="exchange" hidden>
      <button id="back" class="text-button" type="button"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true"><path d="M13 8H3m5-5L3 8l5 5" stroke="currentColor" stroke-width="1.5"/></svg> Back</button>
@@ -66,7 +73,7 @@
    </div>
    <p class="game-instructions">Hold your cursor over your chamber: left for host, right for guest. Both must hold through 3–2–1. Aim and click after FIRE. Six shots each.</p>
   </section>
-  <div class="cabinet-foot"><details class="connection-help"><summary>How direct play works</summary><div class="help-copy"><p>The host runs all gameplay and has a latency advantage. The guest sends aim and fire inputs. Public STUN helps discover a direct route; PeerJS’s free public service exchanges connection details so six-digit joining works. Its operators host signaling; neither player maintains a backend. Availability depends on that service.</p><p>Gameplay travels directly between browsers, with no TURN relay. Some networks need a relay and cannot connect here. The duel ends when the host leaves. Rematches require both players.</p><p>Keep the host tab visible. Share codes only with the friend you want to connect to.</p><p>We use <a href="https://www.goatcounter.com/privacy">GoatCounter</a> for cookie-free visitor and duel counts. No room codes, player inputs or gameplay recordings are sent.</p></div></details>
+  <div class="cabinet-foot"><details class="connection-help"><summary>How direct play works</summary><div class="help-copy"><p>Quick Match pairs you with another waiting player; the first waiting player hosts and plays left. Host Game and Join Game are for sharing a private code. The host runs all gameplay and has a latency advantage. The guest sends aim and fire inputs. Public STUN helps discover a direct route; PeerJS’s free public service exchanges connection details so six-digit joining works. Its operators host signaling; neither player maintains a backend. Availability depends on that service.</p><p>Gameplay travels directly between browsers, with no TURN relay. Some networks need a relay and cannot connect here. The duel ends when the host leaves. Rematches require both players.</p><p>Keep the host tab visible. Share codes only with the friend you want to connect to.</p><p>We use <a href="https://www.goatcounter.com/privacy">GoatCounter</a> for cookie-free visitor and duel counts. No room codes, player inputs or gameplay recordings are sent.</p></div></details>
   <footer><span>Original game by Andrew Wolf / <a href="https://www.wolfgames.com/">Wolf Games</a> · <a href="https://www.gunblood.com/">Gunblood.com</a></span><span>Unofficial multiplayer adaptation by <a href="https://github.com/atesahmet0">atesahmet0</a> · Rendered with <a href="https://ruffle.rs/">Ruffle</a></span></footer></div>
  </main>
  <noscript><p class="noscript">Enable JavaScript to connect and play Gunblood.</p></noscript>
