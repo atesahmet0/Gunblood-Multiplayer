@@ -1,0 +1,26 @@
+PASS invalid code remains editable
+PASS host reserves six-digit room
+PASS automatic six-digit pairing through public PeerJS and both scenes initialized
+PASS guest cannot shoot before readiness
+PASS leaving chamber resets countdown
+PASS both-ready countdown reaches FIRE
+PASS legacy CHEATS ON label is hidden on guest
+PASS legacy label timeline stays stopped
+PASS guest controls only right character; host applies damage
+PASS guest health equals host without duplicate damage
+PASS final head transforms converge within 0.1 stage pixel
+PASS HUD left health/ammunition matches authority on host
+PASS HUD right health/ammunition matches authority on host
+PASS HUD left health/ammunition matches authority on guest
+PASS HUD right health/ammunition matches authority on guest
+Right win ammo: [6,2]
+PASS one player cannot force rematch
+PASS rematch request label persists through snapshots
+PASS mutual rematch creates fresh arenas
+PASS six-shot limit and empty-ammo draw
+PASS extra fire cannot bypass ammunition or finished round
+PASS host departure ends guest session
+PASS ended session hides unavailable game actions
+PASS slow upload keeps less than two typical snapshots queued
+Synthetic upload {"maxQueuedBytes":4661,"maxQueueDelayMs":212.36250001192093,"sent":196,"lost":31,"stateBytes":187149,"stateFrames":192,"referencesDropped":0}
+SUITE PASSED 256 kbit/s upload, 100 ms each direction, 20% state loss

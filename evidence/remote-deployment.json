@@ -1,0 +1,25 @@
+{
+  "commit": "a5ed8ac",
+  "files": {
+    "app.mjs": {
+      "sha256": "b7e36ddcebf2f0624070eb52f3490d0d1acd64ae8a9e121cb3720fe0242432ca",
+      "matches_local": true
+    },
+    "peer.mjs": {
+      "sha256": "e0121b96da29cd090793e8524a1540d65f392b350e3cb86ffeb362d34284161a",
+      "matches_local": true
+    },
+    "snapshot-codec.mjs": {
+      "sha256": "8133c1a1fca4b855634fbaaf8d233c81cd2c1080ec3a31c2e246fee53bf5faf1",
+      "matches_local": true
+    },
+    "connection-metrics.mjs": {
+      "sha256": "7bf7e45aeace2576355f746bb375bb4fd1ddc44ef75e5782f3013a6b5fa63b26",
+      "matches_local": true
+    },
+    "index.html": {
+      "sha256": "29936b62b6714d72ff4d6463073386e6f9da9fa7ba771b8954e5000f7daa488d",
+      "matches_local": true
+    }
+  }
+}
