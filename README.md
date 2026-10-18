@@ -45,6 +45,8 @@ The bootstrap explicitly prepares the scene and sound library after the complete
 
 The host runs physics, randomness, collisions, damage and the post-tick winner decision. Guest messages are constrained inputs for the right player; claimed hits/damage are ignored. A reliable ordered channel carries fire/session/round/rematch events. An unordered channel with no retransmission carries aim and complete gzip render snapshots, with sequence checks and backpressure. Snapshots contain nested display transforms/animation frames, dynamic effects, health, ammunition and round state. Missing replaceable updates are superseded by later complete snapshots.
 
+The receiver keeps one decode in flight and one replaceable waiting packet, then renders the newest state once per animation frame. A local bridge patch skips unchanged display branches; the network always sends complete snapshots. Host snapshots and guest aim updates are sampled every 40 ms. `perf-test.html` measures synchronous guest bridge cost during moving aim.
+
 `docs/build.json` records the compiled SWF checksum. The browser checks and their precise coverage are documented in [VERIFICATION.md](VERIFICATION.md). Developer harnesses are `bridge-test.html`, `simulation-test.html`, `control-test.html` and `test-runner.html`.
 
 See [NOTICE.md](NOTICE.md) for ownership, provenance and hosting terms. No open-source license grant for the original game is asserted.
